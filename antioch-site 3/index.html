@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<!--
+  index.html — Antioch Church Homepage
+  =====================================
+  The front door of the website. Introduces the church,
+  shows previews of news, sermons, courses, and 3R,
+  then directs visitors to the dedicated pages.
+
+  Pages in this site:
+    index.html        → Home (this file)
+    pages/news.html   → 最新消息
+    pages/about.html  → 認識安提阿
+    pages/sermons.html→ 講道錄音
+    pages/courses.html→ 圣经与神学课程
+    pages/3r.html     → 3R 課程
+    pages/support.html→ 支持我們
+-->
+<html lang="zh-TW" id="html-root">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>安提阿教會 Antioch Church · Burnaby BC</title>
+  <meta name="description" content="溫哥華安提阿教會 — 榮耀神、享受神、傳揚神。A warm Chinese Christian community in Burnaby, BC."/>
+
+  <!-- Google Fonts: Playfair Display (serif), Noto Serif TC (Chinese), Inter (sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <!-- Shared design system -->
+  <link rel="stylesheet" href="css/main.css"/>
+
+  <!-- Page-specific styles -->
+  <style>
+    /* ── LANGUAGE SWITCHING ──────────────────────────────────
+     * [data-zh] is visible by default.
+     * [data-en] is hidden by default.
+     * When .lang-en is on <body>, they flip.
+     * Inline elements use span; block elements use div.
+     */
+    [data-en]            { display: none; }
+    [data-zh]            { display: block; }
+    span[data-en]        { display: none; }
+    span[data-zh]        { display: inline; }
+    .lang-en [data-en]   { display: block; }
+    .lang-en [data-zh]   { display: none; }
+    .lang-en span[data-en]  { display: inline; }
+    .lang-en span[data-zh]  { display: none; }
+
+    /* ── HERO SLIDESHOW ──────────────────────────────────────
+     * Full-screen hero with 5 rotating real church photos.
+     * Each .hero-slide is absolutely positioned and fades in/out.
+     */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    .hero-slideshow {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      /* Slow crossfade between slides */
+      transition: opacity 1.8s ease;
+    }
+
+    .hero-slide.active { opacity: 1; }
+
+    /* Dark gradient so white text is always readable */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        to bottom,
+        rgba(18,16,12,0.28) 0%,
+        rgba(18,16,12,0.20) 45%,
+        rgba(18,16,12,0.65) 100%
+      );
+    }
+
+    /* Centred content over the slideshow */
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* Decorative rules either side of eyebrow text */
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: rgba(255,255,255,0.35);
+    }
+
+    .hero-title {
+      font-family: var(--zh);
+      font-size: clamp(48px, 9vw, 96px);
+      font-weight: 600;
+      color: white;
+      line-height: 1.05;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+      text-shadow: 0 4px 24px rgba(0,0,0,0.28);
+      /* Fade up on page load */
+      animation: fadeUp 1.2s ease-out both;
+    }
+
+    .lang-en .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(40px, 7vw, 82px);
+      letter-spacing: 0.02em;
+    }
+
+    .hero-title-sub {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(16px, 2.5vw, 28px);
+      color: var(--gold-lt);
+      margin-bottom: 24px;
+      animation: fadeUp 1.2s 0.15s ease-out both;
+    }
+
+    .hero-slogan {
+      font-family: var(--zh);
+      font-size: clamp(13px, 1.8vw, 18px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.18em;
+      margin-bottom: 6px;
+      animation: fadeUp 1.2s 0.3s ease-out both;
+    }
+
+    .lang-en .hero-slogan {
+      font-family: var(--serif);
+      font-style: italic;
+      letter-spacing: 0.06em;
+    }
+
+    .hero-slogan-en {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(12px, 1.4vw, 15px);
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 52px;
+      animation: fadeUp 1.2s 0.4s ease-out both;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 1.2s 0.5s ease-out both;
+    }
+
+    /* Slideshow navigation dots */
+    .hero-dots {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      gap: 8px;
+    }
+
+    .hero-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .hero-dot.active {
+      background: white;
+      width: 24px;
+      border-radius: 3px;
+    }
+
+    /* ── SERVICE INFO BAR ────────────────────────────────────
+     * Quick info strip between hero and first section.
+     */
+    .service-bar {
+      background: rgba(253,249,243,0.98);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(200,144,42,0.12);
+      padding: 22px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .service-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .service-item-icon { font-size: 18px; }
+
+    .service-item-text {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.4;
+    }
+
+    .service-item-text strong {
+      display: block;
+      color: var(--charcoal);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.03em;
+    }
+
+    .service-item-text a {
+      color: var(--gold);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ── COMMUNITY PREVIEW ────────────────────────────────── */
+    .community-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .community-headline {
+      font-family: var(--zh);
+      font-size: clamp(30px, 4vw, 50px);
+      font-weight: 600;
+      color: var(--charcoal);
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    .lang-en .community-headline { font-family: var(--serif); }
+
+    /* The italic gold word inside the headline */
+    .community-headline em {
+      font-style: italic;
+      color: var(--gold);
+      font-family: var(--serif);
+    }
+
+    /* 4-cell mosaic of real church photos */
+    .photo-mosaic {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 160px 160px 160px;
+      gap: 12px;
+    }
+
+    .mosaic-cell {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .mosaic-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .mosaic-cell:hover img { transform: scale(1.06); }
+
+    /* First cell spans two rows — the hero photo in the mosaic */
+    .mosaic-cell:first-child {
+      grid-row: 1 / 3;
+      border-radius: var(--radius-lg) var(--radius-md) var(--radius-md) var(--radius-md);
+    }
+
+    /* Last cell spans two columns */
+    .mosaic-cell:nth-child(4) { grid-column: 1 / 3; }
+
+    /* ── WORSHIP SECTION ─────────────────────────────────── */
+    .worship-img {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      position: relative;
+    }
+
+    .worship-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Subtle gradient at bottom of worship photo */
+    .worship-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(20,18,14,0.40) 0%, transparent 55%);
+    }
+
+    .info-card {
+      padding: 26px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(200,144,42,0.20);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+
+    .info-row { display: flex; align-items: flex-start; gap: 14px; }
+    .info-icon { font-size: 17px; flex-shrink: 0; margin-top: 2px; }
+
+    .info-label {
+      font-family: var(--sans);
+      font-size: 9.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-lt);
+      opacity: 0.65;
+      margin-bottom: 3px;
+    }
+
+    .info-val {
+      font-family: var(--zh);
+      font-size: 14px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.55;
+    }
+
+    .lang-en .info-val { font-family: var(--sans); }
+    .info-val a { color: var(--gold-lt); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── NEWS PREVIEW ────────────────────────────────────── */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .news-card {
+      background: white;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(200,144,42,0.10);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .news-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(200,144,42,0.12);
+    }
+
+    .news-card-img {
+      aspect-ratio: 16/10;
+      overflow: hidden;
+    }
+
+    .news-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .news-card:hover .news-card-img img { transform: scale(1.05); }
+
+    .news-card-body { padding: 20px; }
+
+    .news-card-date {
+      font-family: var(--sans);
+      font-size: 11px;
+      color: var(--light);
+      margin-bottom: 8px;
+    }
+
+    .news-card-title {
+      font-family: var(--zh);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--charcoal);
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+
+    .lang-en .news-card-title { font-family: var(--sans); }
+
+    .news-card-more {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s;
+    }
+
+    .news-card:hover .news-card-more { gap: 8px; }
+
+    /* ── SERMON PREVIEW ──────────────────────────────────── */
+    /* Featured sermon on homepage */
+    .sf-img {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 16/10;
+      position: relative;
+    }
+
+    .sf-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .sf-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(200,144,42,0.25), transparent);
+    }
+
+    /* Circular play button overlaid on featured sermon image */
+    .sf-play {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.90);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      z-index: 1;
+      border: none;
+    }
+
+    .sf-play:hover { transform: translate(-50%,-50%) scale(1.1); background: var(--gold); }
+    .sf-play:hover svg { fill: white; }
+    .sf-play svg { fill: var(--gold); width: 24px; height: 24px; margin-left: 3px; }
+
+    /* Sermon list rows (homepage preview + full sermons page) */
+    .sermon-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(200,144,42,0.07);
+      cursor: pointer;
+      transition: padding-left 0.2s;
+    }
+
+    .sermon-row:hover { padding-left: 6px; }
+    .sermon-row:hover .sermon-row-title { color: var(--gold); }
+
+    .sermon-play-btn {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(200,144,42,0.30);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      transition: all 0.2s;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    /* Hide pause icon by default; show when playing */
+    .sermon-play-btn .icon-pause { display: none; }
+    .sermon-row.playing .sermon-play-btn .icon-play  { display: none; }
+    .sermon-row.playing .sermon-play-btn .icon-pause { display: block; }
+
+    .sermon-row:hover .sermon-play-btn,
+    .sermon-row.playing .sermon-play-btn {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: white;
+    }
+
+    .sermon-row-body { flex: 1; min-width: 0; }
+
+    .sermon-row-title {
+      font-family: var(--zh);
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--charcoal);
+      transition: color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .lang-en .sermon-row-title { font-family: var(--sans); }
+
+    .sermon-row-meta {
+      font-family: var(--sans);
+      font-size: 11.5px;
+      color: var(--light);
+    }
+
+    /* ── COURSES PREVIEW ─────────────────────────────────── */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .course-card {
+      background: var(--paper);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      border: 1px solid rgba(200,144,42,0.10);
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .course-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(200,144,42,0.10);
+      border-color: rgba(200,144,42,0.30);
+    }
+
+    .course-icon { font-size: 30px; margin-bottom: 14px; }
+
+    .course-title {
+      font-family: var(--zh);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--charcoal);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .lang-en .course-title { font-family: var(--sans); }
+
+    .course-desc {
+      font-family: var(--zh);
+      font-size: 13px;
+      line-height: 1.85;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+
+    .lang-en .course-desc { font-family: var(--sans); line-height: 1.7; }
+
+    .course-more {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: gap 0.2s;
+    }
+
+    .course-card:hover .course-more { gap: 9px; }
+
+    /* ── 3R PREVIEW STRIP ────────────────────────────────── */
+    .r3-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .r3-cards-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .r3-mini-card {
+      padding: 18px 22px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
+    .r3-mini-num {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: rgba(200,144,42,0.35);
+      margin-bottom: 4px;
+    }
+
+    .r3-mini-title {
+      font-family: var(--zh);
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 3px;
+    }
+
+    .lang-en .r3-mini-title { font-family: var(--sans); }
+
+    .r3-mini-desc {
+      font-family: var(--zh);
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.50);
+      line-height: 1.6;
+    }
+
+    .lang-en .r3-mini-desc { font-family: var(--sans); }
+
+    /* ── INVITATION SECTION ──────────────────────────────── */
+    .invitation {
+      position: relative;
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .invitation-bg {
+      position: absolute;
+      inset: 0;
+    }
+
+    .invitation-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .invitation-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(18,16,12,0.50), rgba(18,16,12,0.65));
+    }
+
+    .invitation-content {
+      position: relative;
+      z-index: 1;
+      padding: 80px 24px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .invitation-title {
+      font-family: var(--zh);
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 600;
+      color: white;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 24px rgba(0,0,0,0.28);
+    }
+
+    .lang-en .invitation-title { font-family: var(--serif); }
+
+    .invitation-sub {
+      font-family: var(--zh);
+      font-size: clamp(14px, 1.8vw, 17px);
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 40px;
+      line-height: 1.75;
+    }
+
+    .lang-en .invitation-sub { font-family: var(--sans); }
+
+    /* ── QUOTE ───────────────────────────────────────────── */
+    .quote-section {
+      text-align: center;
+      padding: 110px 48px;
+    }
+
+    .quote-mark {
+      font-family: var(--serif);
+      font-size: 100px;
+      line-height: 0.7;
+      color: var(--gold);
+      opacity: 0.20;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .quote-text {
+      font-family: var(--zh);
+      font-size: clamp(17px, 2.6vw, 26px);
+      font-weight: 400;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.90);
+      max-width: 680px;
+      margin: 0 auto 22px;
+    }
+
+    .lang-en .quote-text { font-family: var(--serif); font-style: italic; }
+
+    /* ── KEYFRAMES ───────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .community-grid,
+      .r3-strip { grid-template-columns: 1fr; gap: 40px; }
+      .news-grid,
+      .courses-grid { grid-template-columns: 1fr 1fr; }
+      .service-bar { padding: 20px 32px; gap: 28px; }
+    }
+
+    @media (max-width: 768px) {
+      .news-grid,
+      .courses-grid { grid-template-columns: 1fr; }
+      .service-bar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 24px 20px; }
+      .photo-mosaic { grid-template-rows: 120px 120px 120px; }
+      .quote-section { padding: 80px 24px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     NAVIGATION (shared HTML, behaviour in js/nav.js)
+     ============================================================ -->
+<nav class="nav" id="nav">
+
+  <!-- Logo -->
+  <a href="index.html" class="nav-logo">
+    <img src="images/logo.png" alt="Antioch Church Logo"/>
+    
+  </a>
+
+  <!-- Desktop nav links — each page has its own file -->
+  <ul class="nav-links">
+    <li><a href="./"><span data-zh>首頁</span><span data-en>Home</span></a></li>
+    <li><a href="pages/news.html"><span data-zh>最新消息</span><span data-en>News</span></a></li>
+    <li><a href="pages/about.html"><span data-zh>認識安提阿</span><span data-en>About</span></a></li>
+    <li><a href="pages/sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a></li>
+    <li><a href="pages/courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a></li>
+    <li><a href="pages/3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a></li>
+    <li><a href="pages/support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a></li>
+  </ul>
+
+  <!-- Right side: language toggle + Facebook + hamburger -->
+  <div class="nav-right">
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+
+    <a class="nav-fb" href="https://www.facebook.com/groups/119017864946632/" target="_blank" aria-label="Facebook">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.25h3.32l-.53 3.49h-2.79V24C19.62 23.1 24 18.1 24 12.07z"/>
+      </svg>
+    </a>
+
+    <!-- Hamburger (mobile only, shown via CSS) -->
+    <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile full-screen menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="./"><span data-zh>首頁</span><span data-en>Home</span></a>
+  <a href="pages/news.html"><span data-zh>最新消息</span><span data-en>News</span></a>
+  <a href="pages/about.html"><span data-zh>認識安提阿</span><span data-en>About Us</span></a>
+  <a href="pages/sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a>
+  <a href="pages/courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a>
+  <a href="pages/3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a>
+  <a href="pages/support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a>
+</div>
+
+
+<!-- ============================================================
+     HERO — Full-screen slideshow with 5 real church photos
+     ============================================================ -->
+<section class="hero">
+
+  <!-- Background photos — JS cycles through these every 5 seconds -->
+  <div class="hero-slideshow" id="slideshow">
+    <div class="hero-slide active" style="background-image:url(images/congregation.jpeg)"></div>
+    <div class="hero-slide" style="background-image:url(images/outing.jpeg)"></div>
+    <div class="hero-slide" style="background-image:url(images/piano.jpeg)"></div>
+    <div class="hero-slide" style="background-image:url(images/fathersday.jpeg)"></div>
+    <div class="hero-slide" style="background-image:url(images/christmas.jpeg)"></div>
+  </div>
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span data-zh>溫哥華 · 加拿大</span>
+      <span data-en>Burnaby, Vancouver · Canada</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span data-zh>安提阿教會</span>
+      <span data-en>Antioch Church</span>
+    </h1>
+
+    <div class="hero-title-sub">
+      <span data-zh>Antioch Church · Vancouver</span>
+      <span data-en>A Mandarin Chinese Christian Community</span>
+    </div>
+
+    <div class="hero-slogan">
+      <span data-zh>榮耀神 · 享受神 · 傳揚神</span>
+      <span data-en>Glorify God · Enjoy God · Proclaim God</span>
+    </div>
+    <div class="hero-slogan-en">
+      <span data-zh>Glorify God · Enjoy God · Proclaim God</span>
+      <span data-en>榮耀神 · 享受神 · 傳揚神</span>
+    </div>
+
+    <!-- Two CTAs: primary visits the church info, secondary goes to About -->
+    <div class="hero-ctas">
+      <a href="#worship" class="btn btn--gold">
+        <span data-zh>前來聚會 ↓</span>
+        <span data-en>Visit Us ↓</span>
+      </a>
+      <a href="pages/about.html" class="btn btn--ghost">
+        <span data-zh>認識我們</span>
+        <span data-en>Learn More</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Dots to navigate between slides -->
+  <div class="hero-dots" id="heroDots" role="tablist" aria-label="Slideshow navigation"></div>
+</section>
+
+
+<!-- ============================================================
+     SERVICE INFO BAR
+     Quick facts: time, location, phone, email
+     ============================================================ -->
+<div class="service-bar" id="worship">
+  <div class="service-item">
+    <div class="service-item-icon">🕙</div>
+    <div class="service-item-text">
+      <strong><span data-zh>主日崇拜</span><span data-en>Sunday Service</span></strong>
+      10:00 AM – 11:30 AM
+    </div>
+  </div>
+  <div class="service-item">
+    <div class="service-item-icon">📍</div>
+    <div class="service-item-text">
+      <strong><span data-zh>聚會地點</span><span data-en>Location</span></strong>
+      <a href="https://goo.gl/maps/uirdbHYFjBQz1rMK7" target="_blank">7457 Edmonds St, Burnaby BC</a>
+    </div>
+  </div>
+  <div class="service-item">
+    <div class="service-item-icon">📞</div>
+    <div class="service-item-text">
+      <strong><span data-zh>電話</span><span data-en>Phone</span></strong>
+      604.440.3504
+    </div>
+  </div>
+  <div class="service-item">
+    <div class="service-item-icon">✉️</div>
+    <div class="service-item-text">
+      <strong><span data-zh>電郵</span><span data-en>Email</span></strong>
+      <a href="mailto:antiochchurch.bc@gmail.com">antiochchurch.bc@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     COMMUNITY — Who we are (preview; full story on /about)
+     ============================================================ -->
+<section class="section section--paper">
+  <div class="container">
+    <div class="community-grid">
+
+      <!-- Text column -->
+      <div class="reveal from-left">
+        <div class="t-eyebrow">
+          <span data-zh>認識我們</span>
+          <span data-en>Who We Are</span>
+        </div>
+        <h2 class="community-headline">
+          <span data-zh>信仰，<br/>在彼此相愛中<em>活出來</em></span>
+          <span data-en>Faith lived<br/>together, <em>in love</em></span>
+        </h2>
+        <p class="t-body" style="margin-bottom:32px">
+          <span data-zh>溫哥華安提阿教會是由中港台來的加拿大華人所組成的基督徒群體。這個大家庭的成員，在上帝眼中個個都是尊貴與獨特的。<br/><br/>因著愛的承載力，教會成為我們的方舟，在方舟裡，我們成為一個生命共同體——共享上帝所賜永恆的生命。</span>
+          <span data-en>Vancouver Antioch Church is a Chinese Christian community formed by immigrants and families from mainland China, Hong Kong, and Taiwan — each person precious and unique in God's eyes.<br/><br/>Through the power of love, the church becomes our ark — within it we share in eternal life together.</span>
+        </p>
+        <a href="pages/about.html" class="btn btn--gold">
+          <span data-zh>認識安提阿 →</span>
+          <span data-en>About Antioch →</span>
+        </a>
+      </div>
+
+      <!-- Photo mosaic column — 4 real congregation photos -->
+      <div class="photo-mosaic reveal from-right">
+        <div class="mosaic-cell"><img src="images/congregation.jpeg" alt="Church community"/></div>
+        <div class="mosaic-cell"><img src="images/pastor-andy.jpeg" alt="Pastor induction"/></div>
+        <div class="mosaic-cell"><img src="images/people.jpg" alt="Church members"/></div>
+        <div class="mosaic-cell"><img src="images/outing.jpeg" alt="Church outing"/></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     WORSHIP — Service information with photo
+     ============================================================ -->
+<section class="section section--dark">
+  <div class="container">
+    <div class="two-col">
+
+      <!-- Photo -->
+      <div class="worship-img reveal from-left">
+        <img src="images/piano.jpeg" alt="Sunday worship service"/>
+      </div>
+
+      <!-- Info -->
+      <div class="reveal from-right">
+        <div class="t-eyebrow" style="color:var(--gold-lt)">
+          <span data-zh>主日崇拜</span><span data-en>Sunday Worship</span>
+        </div>
+        <h2 class="t-h2" style="color:white;margin-bottom:8px">
+          <span data-zh>每週與神相遇</span>
+          <span data-en>Gathering with God, every week</span>
+        </h2>
+        <div class="t-h2-sub" style="margin-bottom:28px">
+          <span data-zh>Sunday Worship</span><span data-en>主日崇拜</span>
+        </div>
+
+        <p style="font-family:var(--zh);font-size:15px;line-height:1.95;color:rgba(255,255,255,0.62);margin-bottom:32px">
+          <span data-zh>主日崇拜是我們信仰生活的核心。在敬拜中，我們一起讚美上帝，聆聽聖經的話語，在弟兄姐妹的陪伴中靈命成長。歡迎您帶著開放的心前來。</span>
+          <span data-en>Sunday worship is at the heart of who we are. Together we praise God, hear His Word, and grow in faith. Whoever you are, wherever you're from — you are welcome here.</span>
+        </p>
+
+        <!-- Service details card -->
+        <div class="info-card">
+          <div class="info-row">
+            <div class="info-icon">🕙</div>
+            <div>
+              <div class="info-label"><span data-zh>時間</span><span data-en>Time</span></div>
+              <div class="info-val"><span data-zh>週日</span><span data-en>Every Sunday</span> 10:00 AM – 11:30 AM</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">📍</div>
+            <div>
+              <div class="info-label"><span data-zh>地點</span><span data-en>Location</span></div>
+              <div class="info-val"><a href="https://goo.gl/maps/uirdbHYFjBQz1rMK7" target="_blank">7457 Edmonds Street, Burnaby, BC</a></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✉️</div>
+            <div>
+              <div class="info-label"><span data-zh>郵件地址</span><span data-en>Mailing Address</span></div>
+              <div class="info-val">3003 Vega Court, Burnaby, BC V3J 1B2</div>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://www.facebook.com/groups/119017864946632/" target="_blank" class="btn btn--gold">
+          <span data-zh>在 Facebook 追蹤我們 →</span>
+          <span data-en>Follow us on Facebook →</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     NEWS PREVIEW — Latest 3 items; full page at /news
+     ============================================================ -->
+<section class="section section--warm">
+  <div class="container">
+    <div class="reveal" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="t-eyebrow"><span data-zh>教會最新動態</span><span data-en>Church News & Events</span></div>
+        <h2 class="t-h2"><span data-zh>最新消息</span><span data-en>Latest News</span></h2>
+        <div class="t-h2-sub" style="margin-bottom:0"><span data-zh>What's Happening</span><span data-en>最新消息</span></div>
+      </div>
+      <!-- CTA to full news page -->
+      <a href="pages/news.html" style="font-size:13px;color:var(--gold);font-family:var(--sans);white-space:nowrap">
+        <span data-zh>查看全部消息 →</span><span data-en>All News →</span>
+      </a>
+    </div>
+
+    <div class="news-grid reveal">
+      <!-- News card 1 -->
+      <a href="pages/news.html" class="news-card">
+        <div class="news-card-img"><img src="images/pastor-andy.jpeg" alt="Pastor Induction"/></div>
+        <div class="news-card-body">
+          <div class="news-card-date"><span data-en>June 28, 2026</span><span data-zh>2026年6月28日</span></div>
+          <div class="tag"><span data-zh>教會大事</span><span data-en>Milestone</span></div>
+          <div class="news-card-title"><span data-zh>郭毓安牧師就職典禮</span><span data-en>Pastor Andy Guo Induction Ceremony</span></div>
+          <div class="news-card-more"><span data-zh>閱讀更多</span><span data-en>Read more</span> →</div>
+        </div>
+      </a>
+
+      <!-- News card 2 -->
+      <a href="pages/news.html" class="news-card">
+        <div class="news-card-img"><img src="images/outing.jpeg" alt="Church Outing"/></div>
+        <div class="news-card-body">
+          <div class="news-card-date"><span data-en>July 2026</span><span data-zh>2026年7月</span></div>
+          <div class="tag"><span data-zh>社群活動</span><span data-en>Community</span></div>
+          <div class="news-card-title"><span data-zh>讚美舞蹈小組郊遊</span><span data-en>Praise Dance Group Outing</span></div>
+          <div class="news-card-more"><span data-zh>閱讀更多</span><span data-en>Read more</span> →</div>
+        </div>
+      </a>
+
+      <!-- News card 3 -->
+      <a href="pages/3r.html" class="news-card">
+        <div class="news-card-img" style="background:linear-gradient(135deg,#1a2a1a,#2a3a2a);display:flex;align-items:center;justify-content:center;aspect-ratio:16/10">
+          <div style="text-align:center;color:rgba(255,255,255,0.7);font-family:var(--sans)">
+            <div style="font-size:32px;font-weight:700;color:var(--gold-lt);letter-spacing:0.1em">3R</div>
+            <div style="font-size:11px;letter-spacing:0.15em;margin-top:4px">COURSE</div>
+          </div>
+        </div>
+        <div class="news-card-body">
+          <div class="news-card-date"><span data-en>Now Open</span><span data-zh>現已開放報名</span></div>
+          <div class="tag"><span data-zh>圣经与神学课程</span><span data-en>Course</span></div>
+          <div class="news-card-title"><span data-zh>3R 心靈健康操課程招生</span><span data-en>3R Soul Fitness Course — Now Enrolling</span></div>
+          <div class="news-card-more"><span data-zh>閱讀更多</span><span data-en>Read more</span> →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SERMON PREVIEW — Featured + 3 rows; full archive at /sermons
+     ============================================================ -->
+<section class="section section--paper">
+  <div class="container">
+    <div class="reveal" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:52px;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="t-eyebrow"><span data-zh>聆聽神的話語</span><span data-en>Listen to God's Word</span></div>
+        <h2 class="t-h2"><span data-zh>最新講道錄音</span><span data-en>Recent Sermons</span></h2>
+        <div class="t-h2-sub" style="margin-bottom:0">2025–2026</div>
+      </div>
+      <a href="pages/sermons.html" style="font-size:13px;color:var(--gold);font-family:var(--sans);white-space:nowrap">
+        <span data-zh>查看全部講道 →</span><span data-en>All Sermons →</span>
+      </a>
+    </div>
+
+    <!-- Featured sermon + list side by side -->
+    <div class="two-col reveal">
+      <!-- Featured sermon image with play button -->
+      <div>
+        <div class="sf-img">
+          <img src="images/sermon.jpeg" alt="Latest Sermon"/>
+          <button class="sf-play" onclick="playSermon(0)" aria-label="Play latest sermon">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+        </div>
+        <!-- Featured sermon details -->
+        <div style="margin-top:20px">
+          <div style="font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">
+            <span data-zh>最新講道</span><span data-en>Latest Message</span>
+          </div>
+          <div style="font-family:var(--zh);font-size:clamp(17px,2.2vw,24px);font-weight:600;color:var(--charcoal);line-height:1.3;margin-bottom:10px">
+            <span data-zh>在沈默中引導的上帝</span>
+            <span data-en>God Who Guides in Silence</span>
+          </div>
+          <div style="font-family:var(--sans);font-size:12.5px;color:var(--light);margin-bottom:14px">
+            <span data-zh>白恩拾牧師 · 2026年8月23日</span>
+            <span data-en>Pastor Victor Pai · August 23, 2026</span>
+          </div>
+          <div class="scripture-badge">創世記 / Gen 18:1–15, 21:5–6</div>
+        </div>
+      </div>
+
+      <!-- Recent sermon list (3 sermons, skipping the featured one) -->
+      <div>
+        <div id="sermon-preview-list"></div>
+        <div style="margin-top:24px;text-align:center">
+          <a href="pages/sermons.html" class="btn btn--outline">
+            <span data-zh>查看全部講道錄音</span>
+            <span data-en>All Sermon Recordings</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     COURSE PREVIEW — 3 course cards; full directory at /courses
+     ============================================================ -->
+<section class="section section--warm">
+  <div class="container">
+    <div class="reveal" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:52px;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="t-eyebrow"><span data-zh>在真理中成長</span><span data-en>Grow in Truth</span></div>
+        <h2 class="t-h2"><span data-zh>圣经与神学课程</span><span data-en>Courses & Formation</span></h2>
+        <div class="t-h2-sub" style="margin-bottom:0"><span data-zh>Learning & Formation</span><span data-en>Scripture &amp; Theology</span></div>
+      </div>
+      <a href="pages/courses.html" style="font-size:13px;color:var(--gold);font-family:var(--sans);white-space:nowrap">
+        <span data-zh>探索全部課程 →</span><span data-en>All Courses →</span>
+      </a>
+    </div>
+
+    <div class="courses-grid">
+      <a href="pages/courses.html" class="course-card reveal">
+        <div class="course-icon">📖</div>
+        <div class="tag"><span data-zh>聖經研讀</span><span data-en>Bible Study</span></div>
+        <div class="course-title">
+          <span data-zh>圣经与神学课程</span>
+          <span data-en>Scripture & Theology</span>
+        </div>
+        <div class="course-desc">
+          <span data-zh>深入研讀舊約聖經、約翰福音及保羅書信，以正確的解經原理認識神的話語。</span>
+          <span data-en>In-depth study of the Old Testament, John, and Paul — guided by sound biblical interpretation.</span>
+        </div>
+        <div class="course-more"><span data-zh>瞭解課程 →</span><span data-en>Learn More →</span></div>
+      </a>
+
+      <a href="pages/courses.html" class="course-card reveal">
+        <div class="course-icon">🦋</div>
+        <div class="tag"><span data-zh>信仰基礎</span><span data-en>Foundations</span></div>
+        <div class="course-title">
+          <span data-zh>β-Course 基督教教義初探</span>
+          <span data-en>β-Course: Christian Doctrine</span>
+        </div>
+        <div class="course-desc">
+          <span data-zh>系統性探索基督教核心教義，包括上帝觀、人觀、救恩論與末世論。共九課。</span>
+          <span data-en>A 9-lesson systematic exploration of core Christian beliefs — God, humanity, salvation, and eternity.</span>
+        </div>
+        <div class="course-more"><span data-zh>瞭解課程 →</span><span data-en>Learn More →</span></div>
+      </a>
+
+      <a href="pages/courses.html" class="course-card reveal">
+        <div class="course-icon">🌿</div>
+        <div class="tag"><span data-zh>靈修資源</span><span data-en>Devotional</span></div>
+        <div class="course-title">
+          <span data-zh>名人金句與靈修反省</span>
+          <span data-en>Classic Devotional Quotes</span>
+        </div>
+        <div class="course-desc">
+          <span data-zh>精選教會歷史上偉大信仰前輩的金言，以及基督將臨期靈修經文與反省。</span>
+          <span data-en>Curated wisdom from great Christian thinkers, alongside Advent devotional readings.</span>
+        </div>
+        <div class="course-more"><span data-zh>瞭解課程 →</span><span data-en>Learn More →</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     3R PREVIEW — Visual introduction; full page at /3r
+     ============================================================ -->
+<section class="section section--green">
+  <div class="container">
+    <div class="r3-strip">
+
+      <!-- Text side -->
+      <div class="reveal from-left">
+        <div class="t-eyebrow" style="color:rgba(255,255,255,0.40)">
+          <span data-zh>全新課程</span><span data-en>New Program</span>
+        </div>
+        <h2 class="t-h2" style="color:white;font-family:var(--zh)">
+          <span data-zh>心靈健康操 3R 課程</span>
+          <span data-en>3R Soul Fitness Course</span>
+        </h2>
+        <div class="t-h2-sub" style="color:rgba(255,255,255,0.40);margin-bottom:24px">
+          Reconnect · Reorient · Reintegrate
+        </div>
+        <p style="font-family:var(--zh);font-size:15px;line-height:2.0;color:rgba(255,255,255,0.65);margin-bottom:32px">
+          <span data-zh>由台灣恩約協會所開發，幫助基督徒在信仰、關係與生命各層面得到更新。結合聖經真理與實踐應用，使人在上帝的愛中找到根基。</span>
+          <span data-en>Developed by Grace Covenant Association in Taiwan, the 3R Course helps Christians experience renewal in faith, relationships, and everyday life — rooted in Scripture and practical application.</span>
+        </p>
+        <a href="pages/3r.html" class="btn btn--gold">
+          <span data-zh>認識 3R 課程 →</span>
+          <span data-en>Learn About 3R →</span>
+        </a>
+      </div>
+
+      <!-- R1 / R2 / R3 mini cards -->
+      <div class="r3-cards-mini reveal from-right">
+        <div class="r3-mini-card">
+          <div class="r3-mini-num">R1</div>
+          <div class="r3-mini-title"><span data-zh>重新連結 Reconnect</span><span data-en>Reconnect</span></div>
+          <div class="r3-mini-desc"><span data-zh>與上帝、與自己、與他人重新建立深度的連結。</span><span data-en>Rebuild deep connections with God, yourself, and others.</span></div>
+        </div>
+        <div class="r3-mini-card">
+          <div class="r3-mini-num">R2</div>
+          <div class="r3-mini-title"><span data-zh>重新定向 Reorient</span><span data-en>Reorient</span></div>
+          <div class="r3-mini-desc"><span data-zh>在聖經真理的光中找到生命的方向與呼召。</span><span data-en>Find your life's direction and calling in the light of God's truth.</span></div>
+        </div>
+        <div class="r3-mini-card">
+          <div class="r3-mini-num">R3</div>
+          <div class="r3-mini-title"><span data-zh>重新整合 Reintegrate</span><span data-en>Reintegrate</span></div>
+          <div class="r3-mini-desc"><span data-zh>將信仰融入生命各層面，活出完整的基督徒生命。</span><span data-en>Weave faith into every area of life as a whole person in Christ.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SCRIPTURE QUOTE
+     ============================================================ -->
+<section class="quote-section section--dark">
+  <span class="quote-mark">"</span>
+  <div class="quote-text">
+    <span data-zh>上帝愛世人，甚至將他獨一的兒子賜給他們，叫一切信他的人不致滅亡，反得永生。</span>
+    <span data-en>For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.</span>
+  </div>
+  <div style="font-family:var(--sans);font-size:12px;letter-spacing:0.15em;color:var(--gold-lt)">
+    <span data-zh>約翰福音</span><span data-en>John</span> 3:16
+  </div>
+</section>
+
+
+<!-- ============================================================
+     INVITATION — Warm closing CTA over church exterior photo
+     ============================================================ -->
+<section class="invitation">
+  <div class="invitation-bg">
+    <img src="images/church.jpg" alt="Antioch Church exterior"/>
+  </div>
+  <div class="invitation-content">
+    <h2 class="invitation-title reveal">
+      <span data-zh>在這裡，有你的位置</span>
+      <span data-en>There is a place for you here.</span>
+    </h2>
+    <p class="invitation-sub reveal">
+      <span data-zh>無論你的背景、故事或疑問，安提阿教會歡迎你，帶著真實的自己前來。</span>
+      <span data-en>Whatever your background, story, or questions — you are welcome at Antioch. Come as you are.</span>
+    </p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap" class="reveal">
+      <a href="#worship" class="btn btn--gold">
+        <span data-zh>前來拜訪</span><span data-en>Plan Your Visit</span>
+      </a>
+      <a href="mailto:antiochchurch.bc@gmail.com" class="btn btn--ghost">
+        <span data-zh>聯絡我們</span><span data-en>Contact Us</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER (shared HTML across all pages)
+     ============================================================ -->
+<footer class="footer" id="footer">
+  <div class="footer-rule"></div>
+  <div class="footer-grid container">
+
+    <!-- Column 1: Brand -->
+    <div>
+      <div class="footer-logo"><img src="images/logo.png" alt="Antioch Church"/></div>
+      <div class="footer-brand-zh"><span data-zh>安提阿教會</span><span data-en>Antioch Church</span></div>
+      <div class="footer-brand-slogan">
+        <span data-zh>榮耀神 · 享受神 · 傳揚神</span>
+        <span data-en>Glorify · Enjoy · Proclaim God</span>
+      </div>
+      <a class="footer-fb" href="https://www.facebook.com/groups/119017864946632/" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.25h3.32l-.53 3.49h-2.79V24C19.62 23.1 24 18.1 24 12.07z"/></svg>
+        Facebook
+      </a>
+    </div>
+
+    <!-- Column 2: Navigation -->
+    <div>
+      <div class="footer-heading"><span data-zh>頁面導覽</span><span data-en>Navigation</span></div>
+      <ul class="footer-links">
+        <li><a href="pages/news.html"><span data-zh>最新消息</span><span data-en>News</span></a></li>
+        <li><a href="pages/about.html"><span data-zh>認識安提阿</span><span data-en>About</span></a></li>
+        <li><a href="pages/sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a></li>
+        <li><a href="pages/courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a></li>
+        <li><a href="pages/3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a></li>
+        <li><a href="pages/support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3: Contact -->
+    <div>
+      <div class="footer-heading"><span data-zh>聯絡資訊</span><span data-en>Contact</span></div>
+      <div class="footer-info">
+        <p>📍 <a href="https://goo.gl/maps/uirdbHYFjBQz1rMK7" target="_blank">7457 Edmonds St, Burnaby BC</a></p>
+        <p>✉️ 3003 Vega Court, Burnaby BC V3J 1B2</p>
+        <p>📞 604.440.3504</p>
+        <p>🔗 <a href="mailto:antiochchurch.bc@gmail.com">antiochchurch.bc@gmail.com</a></p>
+      </div>
+    </div>
+
+    <!-- Column 4: Support -->
+    <div>
+      <div class="footer-heading"><span data-zh>支持我們</span><span data-en>Support Us</span></div>
+      <div class="footer-info">
+        <p><span data-zh>您的奉獻支持教會的傳道事工。</span><span data-en>Your giving supports the ministry of Antioch Church.</span></p>
+        <p style="margin-top:10px"><strong style="color:rgba(255,255,255,0.5)">E-Transfer:</strong><br/><a href="mailto:antiochchurch.bc@gmail.com">antiochchurch.bc@gmail.com</a></p>
+        <p style="margin-top:6px"><strong style="color:rgba(255,255,255,0.5)">CRA #:</strong> 890849342 RR 0001</p>
+        <a href="pages/support.html" style="display:inline-block;margin-top:16px;font-size:12px;color:var(--gold-lt);font-family:var(--sans)">
+          <span data-zh>了解如何支持 →</span><span data-en>Learn how to give →</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 安提阿教會 Antioch Church · Burnaby, BC · All rights reserved
+  </div>
+</footer>
+
+
+<!-- ============================================================
+     SCRIPTS
+     Load order matters:
+       1. sermons.js   — data + player (must come before nav.js)
+       2. nav.js       — nav scroll + language toggle
+       3. reveal.js    — scroll animations (last, after all HTML exists)
+     ============================================================ -->
+<script src="js/sermons.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+  /**
+   * Homepage-specific JavaScript
+   *
+   * 1. Hero slideshow
+   * 2. Render the sermon preview list (3 sermons, skip featured)
+   */
+
+  /* ── HERO SLIDESHOW ────────────────────────────────────── */
+  const slides     = document.querySelectorAll('.hero-slide');
+  const dotsEl     = document.getElementById('heroDots');
+  let currentSlide = 0;
+  let slideshowTimer;
+
+  // Build one dot button per slide
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className    = 'hero-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', `Slide ${i + 1}`);
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsEl.appendChild(dot);
+  });
+
+  function goToSlide(n) {
+    // Remove active from current slide and dot
+    slides[currentSlide].classList.remove('active');
+    dotsEl.children[currentSlide].classList.remove('active');
+
+    // Activate the new slide and dot
+    currentSlide = n;
+    slides[currentSlide].classList.add('active');
+    dotsEl.children[currentSlide].classList.add('active');
+
+    // Reset the auto-advance timer
+    clearInterval(slideshowTimer);
+    slideshowTimer = setInterval(advanceSlide, 5000);
+  }
+
+  function advanceSlide() {
+    goToSlide((currentSlide + 1) % slides.length);
+  }
+
+  // Auto-advance every 5 seconds
+  slideshowTimer = setInterval(advanceSlide, 5000);
+
+
+  /* ── SERMON PREVIEW LIST ───────────────────────────────── */
+  // Show 3 sermons, skipping index 0 (the featured sermon above)
+  const previewContainer = document.getElementById('sermon-preview-list');
+  buildSermonList(previewContainer, 3, 1);
+
+  // Re-render sermon list when language switches
+  // (sermon titles are in the JS data, not the HTML)
+  const originalToggle = window.toggleLang;
+  window.toggleLang = function() {
+    originalToggle();
+    buildSermonList(previewContainer, 3, 1);
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<!--
+  pages/sermons.html — 講道錄音 Sermon Recordings
+  ===================================================
+  Full sermon archive with search + filter.
+  Videos link to YouTube — add your URLs in js/sermons.js.
+  Only one year of recordings shown (per requirements).
+-->
+<html lang="zh-TW" id="html-root">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>講道錄音 · 安提阿教會 Antioch Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <style>
+    /* ── LANGUAGE SWITCHING ────────────────────────────────── */
+    [data-en]           { display: none }
+    [data-zh]           { display: block }
+    span[data-en]       { display: none }
+    span[data-zh]       { display: inline }
+    .lang-en [data-en]  { display: block }
+    .lang-en [data-zh]  { display: none }
+    .lang-en span[data-en] { display: inline }
+    .lang-en span[data-zh] { display: none }
+
+    /* ── FEATURED SERMON ────────────────────────────────────── */
+    /* Large card at top — most recent sermon */
+    .sf-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+      margin-bottom: 64px;
+      padding-bottom: 64px;
+      border-bottom: 1px solid rgba(200,144,42,0.12);
+    }
+
+    /* Thumbnail with play button overlay */
+    .sf-thumb {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 16/10;
+      position: relative;
+      background: #1a1a1a;
+      cursor: pointer;
+    }
+
+    .sf-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+
+    .sf-thumb:hover img { opacity: 0.70; }
+
+    /* Warm amber gradient over the thumbnail */
+    .sf-thumb::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(200,144,42,0.20), transparent 60%);
+    }
+
+    /* Large YouTube-style play button */
+    .sf-play-btn {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      z-index: 1;
+    }
+
+    .sf-play-btn:hover {
+      transform: translate(-50%, -50%) scale(1.10);
+      background: var(--gold);
+    }
+
+    .sf-play-btn:hover svg { fill: white; }
+
+    .sf-play-btn svg {
+      fill: var(--gold);
+      width: 28px; height: 28px;
+      margin-left: 4px; /* optical centering of play triangle */
+    }
+
+    /* "Watch on YouTube" badge in the corner */
+    .sf-yt-badge {
+      position: absolute;
+      bottom: 12px; right: 12px;
+      z-index: 1;
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: rgba(18,16,12,0.75);
+      border-radius: 20px;
+      font-family: var(--sans);
+      font-size: 11px; font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.03em;
+    }
+
+    .sf-yt-badge svg { fill: #FF0000; flex-shrink: 0; }
+
+    /* Featured sermon text side */
+    .sf-eyebrow {
+      font-family: var(--sans);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 12px;
+    }
+
+    .sf-title {
+      font-family: var(--zh);
+      font-size: clamp(18px, 2.4vw, 28px);
+      font-weight: 600; color: var(--charcoal);
+      line-height: 1.3; margin-bottom: 10px;
+    }
+    .lang-en .sf-title { font-family: var(--serif); }
+
+    .sf-meta {
+      font-family: var(--sans);
+      font-size: 13px; color: var(--light);
+      margin-bottom: 16px;
+    }
+
+    .sf-desc {
+      font-family: var(--zh);
+      font-size: 14px; line-height: 1.85;
+      color: var(--mid); margin-bottom: 24px;
+    }
+    .lang-en .sf-desc { font-family: var(--sans); }
+
+    /* ── SEARCH BAR ─────────────────────────────────────────── */
+    /*
+     * .ssb = sermon search bar (scoped prefix to avoid conflicts)
+     * Sticky below the page hero so it stays accessible while
+     * scrolling through a long sermon list.
+     */
+    .ssb-wrapper {
+      position: sticky;
+      top: 72px; /* matches nav height */
+      z-index: 100;
+      background: rgba(253,249,243,0.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(200,144,42,0.12);
+      padding: 14px 48px;
+    }
+
+    /* Inner flex row */
+    .ssb {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    /* Search input wrapper */
+    .ssb-field {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .ssb-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--light);
+      pointer-events: none;
+    }
+
+    #ssb-input {
+      width: 100%;
+      padding: 10px 36px 10px 38px;
+      border-radius: 24px;
+      border: 1.5px solid rgba(200,144,42,0.20);
+      background: white;
+      font-family: var(--zh);
+      font-size: 13.5px;
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      /* Remove default search input styling */
+      -webkit-appearance: none;
+    }
+
+    .lang-en #ssb-input { font-family: var(--sans); }
+
+    #ssb-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200,144,42,0.10);
+    }
+
+    /* Clear (✕) button inside the search input */
+    .ssb-clear {
+      position: absolute;
+      right: 10px; top: 50%;
+      transform: translateY(-50%);
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--light);
+      color: white;
+      font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none;
+      transition: background 0.2s;
+    }
+
+    .ssb-clear:hover { background: var(--gold); }
+
+    /* Filter dropdowns */
+    .ssb-select {
+      padding: 10px 32px 10px 14px;
+      border-radius: 24px;
+      border: 1.5px solid rgba(200,144,42,0.20);
+      background: white;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--charcoal);
+      cursor: pointer;
+      outline: none;
+      /* Custom arrow */
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239B9790' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color 0.2s;
+    }
+
+    .ssb-select:focus { border-color: var(--gold); outline: none; }
+
+    /* Result count label */
+    .ssb-count {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--light);
+      white-space: nowrap;
+      padding: 0 4px;
+    }
+
+    /* "Clear all" button — only shown when a filter is active */
+    .ssb-clear-all {
+      font-family: var(--sans);
+      font-size: 12px; font-weight: 500;
+      color: var(--gold);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(200,144,42,0.30);
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .ssb-clear-all:hover { background: var(--gold); color: white; border-color: var(--gold); }
+
+    /* ── SERMON ROW LIST ────────────────────────────────────── */
+    .sermon-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(200,144,42,0.07);
+      cursor: pointer;
+      transition: padding-left 0.2s, background 0.2s;
+      border-radius: 4px;
+    }
+
+    .sermon-row:hover { padding-left: 8px; }
+
+    .sermon-row:hover .sermon-row-title { color: var(--gold); }
+
+    /* Play / coming-soon button */
+    .sermon-play-btn {
+      flex-shrink: 0;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(200,144,42,0.30);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sermon-row:hover .sermon-play-btn,
+    .sermon-play-btn:not(.sermon-soon):hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: white;
+    }
+
+    /* Dimmed state when no YouTube link yet */
+    .sermon-play-btn.sermon-soon {
+      border-color: rgba(200,144,42,0.15);
+      color: var(--light);
+      cursor: default;
+    }
+
+    .sermon-row-body { flex: 1; min-width: 0; }
+
+    .sermon-row-title {
+      font-family: var(--zh);
+      font-size: 14.5px; font-weight: 500;
+      color: var(--charcoal);
+      transition: color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .lang-en .sermon-row-title { font-family: var(--sans); }
+
+    .sermon-row-meta {
+      font-family: var(--sans);
+      font-size: 11.5px;
+      color: var(--light);
+    }
+
+    /* "Coming soon" pill in the meta line */
+    .sermon-soon-label {
+      display: inline-block;
+      font-size: 9.5px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(200,144,42,0.08);
+      padding: 2px 8px;
+      border-radius: 10px;
+      vertical-align: middle;
+    }
+
+    /* YouTube icon — shown on hover, desktop only */
+    .sermon-yt-icon {
+      flex-shrink: 0;
+      color: rgba(200,144,42,0.35);
+      transition: color 0.2s;
+    }
+
+    .sermon-row:hover .sermon-yt-icon { color: var(--gold); }
+
+    @media (max-width: 640px) { .sermon-yt-icon { display: none; } }
+
+    /* ── YOUTUBE CHANNEL PROMO BAND ─────────────────────────── */
+    .yt-promo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px 32px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(255,0,0,0.06), rgba(200,144,42,0.06));
+      border: 1px solid rgba(255,0,0,0.12);
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+
+    .yt-promo-left {
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    .yt-promo-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: #FF0000;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .yt-promo-title {
+      font-family: var(--zh);
+      font-size: 16px; font-weight: 600;
+      color: var(--charcoal); margin-bottom: 4px;
+    }
+
+    .lang-en .yt-promo-title { font-family: var(--sans); }
+
+    .yt-promo-sub {
+      font-family: var(--sans);
+      font-size: 12.5px; color: var(--mid);
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .sf-grid { grid-template-columns: 1fr; gap: 32px; }
+      .ssb-wrapper { padding: 12px 32px; }
+    }
+
+    @media (max-width: 768px) {
+      .ssb-wrapper { padding: 12px 20px; top: 0; }
+      .ssb { gap: 8px; }
+      .ssb-field { min-width: 100%; }
+      .ssb-select { flex: 1; }
+      .scripture-badge { display: none; }
+      .yt-promo { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-logo">
+    <img src="../images/logo.png" alt="Antioch Church Logo"/>
+    
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html"><span data-zh>首頁</span><span data-en>Home</span></a></li>
+    <li><a href="news.html"><span data-zh>最新消息</span><span data-en>News</span></a></li>
+    <li><a href="about.html"><span data-zh>認識安提阿</span><span data-en>About</span></a></li>
+    <li><a href="sermons.html" class="active"><span data-zh>講道錄音</span><span data-en>Sermons</span></a></li>
+    <li><a href="courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a></li>
+    <li><a href="3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a></li>
+    <li><a href="support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+    <a class="nav-fb" href="https://www.facebook.com/groups/119017864946632/"
+       target="_blank" aria-label="Facebook">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.25h3.32l-.53 3.49h-2.79V24C19.62 23.1 24 18.1 24 12.07z"/>
+      </svg>
+    </a>
+    <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="../index.html"><span data-zh>首頁</span><span data-en>Home</span></a>
+  <a href="news.html"><span data-zh>最新消息</span><span data-en>News</span></a>
+  <a href="about.html"><span data-zh>認識安提阿</span><span data-en>About Us</span></a>
+  <a href="sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a>
+  <a href="courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a>
+  <a href="3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a>
+  <a href="support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a>
+</div>
+
+
+<!-- ── PAGE HERO ────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="page-hero__bg">
+    <img src="../images/sermon.jpeg" alt="Sermon — Antioch Church"/>
+  </div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <div class="page-hero__eyebrow">
+      <span data-zh>聆聽神的話語</span>
+      <span data-en>Listen to God's Word</span>
+    </div>
+    <div class="page-hero__title">
+      <span data-zh>講道錄音</span>
+      <span data-en>Sermon Recordings</span>
+    </div>
+    <div class="page-hero__subtitle">
+      <!-- Requirement: only one year of recordings -->
+      <span data-zh>最近一年講道 · 連結至 YouTube</span>
+      <span data-en>One year of messages · Linked to YouTube</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── STICKY SEARCH + FILTER BAR ───────────────────────────── -->
+<!--
+  This bar sticks just below the nav (top: 72px) as you scroll
+  through the sermon list. All filtering is done in JS with no
+  page reload — results update instantly as you type.
+-->
+<div class="ssb-wrapper">
+  <!--
+    #sermon-search-bar is the target ID that initSermonSearch()
+    injects the search input and dropdowns into.
+  -->
+  <div id="sermon-search-bar"></div>
+</div>
+
+
+<!-- ── MAIN CONTENT ─────────────────────────────────────────── -->
+<section class="section section--paper">
+  <div class="container">
+
+    <!-- FEATURED SERMON — most recent, index 0 in SERMONS array -->
+    <div class="reveal">
+      <div class="t-eyebrow">
+        <span data-zh>最新講道</span>
+        <span data-en>Latest Message</span>
+      </div>
+    </div>
+
+    <div class="sf-grid reveal">
+      <!-- Thumbnail / play area -->
+      <div class="sf-thumb" onclick="openSermon(0)" role="button"
+           tabindex="0" aria-label="Play latest sermon"
+           onkeydown="if(event.key==='Enter')openSermon(0)">
+        <img src="../images/sermon.jpeg" alt="Latest sermon"/>
+        <button class="sf-play-btn" aria-label="Watch on YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+        <!-- YouTube badge -->
+        <div class="sf-yt-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.8 7.2s-.2-1.7-1-2.4c-.9-1-1.9-1-2.4-1.1C17.2 3.5 12 3.5 12 3.5s-5.2 0-8.4.2c-.5.1-1.5.1-2.4 1.1-.7.7-1 2.4-1 2.4S0 9.1 0 11v1.8c0 1.9.2 3.8.2 3.8s.2 1.7 1 2.4c.9 1 2.1.9 2.6 1C5.6 20.2 12 20.2 12 20.2s5.2 0 8.4-.3c.5-.1 1.5-.1 2.4-1.1.7-.7 1-2.4 1-2.4s.2-1.9.2-3.8V11c0-1.9-.2-3.8-.2-3.8zM9.7 15.5V8.4l6.6 3.6-6.6 3.5z"/>
+          </svg>
+          YouTube
+        </div>
+      </div>
+
+      <!-- Featured sermon details — populated statically for SEO,
+           clicking still opens the modal via JS -->
+      <div>
+        <div class="sf-eyebrow">
+          <span data-zh>最新講道 · Latest Message</span>
+          <span data-en>Latest Message · 最新講道</span>
+        </div>
+        <div class="sf-title">
+          <span data-zh>在沈默中引導的上帝</span>
+          <span data-en>God Who Guides in Silence</span>
+        </div>
+        <div class="sf-meta">
+          <span data-zh>白恩拾牧師 · 2026年8月23日</span>
+          <span data-en>Pastor Victor Pai · August 23, 2026</span>
+        </div>
+        <div class="scripture-badge" style="margin-bottom:18px">
+          創世記 / Gen 24:1–33, 50–61
+        </div>
+        <div class="sf-desc">
+          <span data-zh>
+            當上帝沈默時，祂仍在引導。透過亞伯拉罕僕人尋找利百加的旅程，
+            看見上帝在靜默中美麗的帶領。
+          </span>
+          <span data-en>
+            When God is silent, He is still guiding. Through the journey of
+            Abraham's servant seeking Rebekah, we see God's beautiful leadership
+            even in stillness.
+          </span>
+        </div>
+        <button class="btn btn--gold" onclick="openSermon(0)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="flex-shrink:0">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span data-zh>在 YouTube 觀看</span>
+          <span data-en>Watch on YouTube</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ALL SERMONS LIST ──────────────────────────────────────
+      The search bar above filters this list in real time.
+      JS renders rows into #full-sermon-list via buildSermonList().
+      The heading text is static HTML; the rows are dynamic.
+    ─────────────────────────────────────────────────────────── -->
+    <div class="reveal">
+      <div class="t-eyebrow" style="margin-bottom:24px">
+        <span data-zh>全部講道錄音 · 最近一年</span>
+        <span data-en>All Recordings · Past Year</span>
+      </div>
+    </div>
+
+    <!--
+      data-sermon-container tells rerenderAllSermonLists() to re-render
+      this element when the language switches.
+      data-skip="1" means skip index 0 (it's the featured sermon above).
+      data-filtered="true" means use filterState when rendering.
+    -->
+    <div
+      id="full-sermon-list"
+      data-sermon-container
+      data-skip="1"
+      data-filtered="true"
+    ></div>
+
+
+    <!-- YouTube channel promo strip -->
+    <div class="yt-promo reveal">
+      <div class="yt-promo-left">
+        <div class="yt-promo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M23.8 7.2s-.2-1.7-1-2.4c-.9-1-1.9-1-2.4-1.1C17.2 3.5 12 3.5 12 3.5s-5.2 0-8.4.2c-.5.1-1.5.1-2.4 1.1-.7.7-1 2.4-1 2.4S0 9.1 0 11v1.8c0 1.9.2 3.8.2 3.8s.2 1.7 1 2.4c.9 1 2.1.9 2.6 1C5.6 20.2 12 20.2 12 20.2s5.2 0 8.4-.3c.5-.1 1.5-.1 2.4-1.1.7-.7 1-2.4 1-2.4s.2-1.9.2-3.8V11c0-1.9-.2-3.8-.2-3.8zM9.7 15.5V8.4l6.6 3.6-6.6 3.5z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="yt-promo-title">
+            <span data-zh>訂閱我們的 YouTube 頻道</span>
+            <span data-en>Subscribe to our YouTube Channel</span>
+          </div>
+          <div class="yt-promo-sub">
+            <span data-zh>所有新講道將上傳至 YouTube，訂閱以接收通知。</span>
+            <span data-en>All new sermons are uploaded to YouTube — subscribe for notifications.</span>
+          </div>
+        </div>
+      </div>
+      <!--
+        Replace this href with your actual YouTube channel URL.
+        Format: https://www.youtube.com/@YourChannelName
+        or:     https://www.youtube.com/channel/UCxxxxxxxxxxxxxxxx
+      -->
+      <a href="https://www.youtube.com/@antiochchurch4769"
+         target="_blank"
+         class="btn btn--gold">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+          <path d="M23.8 7.2s-.2-1.7-1-2.4c-.9-1-1.9-1-2.4-1.1C17.2 3.5 12 3.5 12 3.5s-5.2 0-8.4.2c-.5.1-1.5.1-2.4 1.1-.7.7-1 2.4-1 2.4S0 9.1 0 11v1.8c0 1.9.2 3.8.2 3.8s.2 1.7 1 2.4c.9 1 2.1.9 2.6 1C5.6 20.2 12 20.2 12 20.2s5.2 0 8.4-.3c.5-.1 1.5-.1 2.4-1.1.7-.7 1-2.4 1-2.4s.2-1.9.2-3.8V11c0-1.9-.2-3.8-.2-3.8zM9.7 15.5V8.4l6.6 3.6-6.6 3.5z"/>
+        </svg>
+        <span data-zh>前往頻道</span><span data-en>Visit Channel</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ── FOOTER ───────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-rule"></div>
+  <div class="footer-grid container">
+    <div>
+      <div class="footer-logo">
+        <img src="../images/logo.png" alt="Antioch Church"/>
+      </div>
+      <div class="footer-brand-zh">
+        <span data-zh>安提阿教會</span><span data-en>Antioch Church</span>
+      </div>
+      <div class="footer-brand-slogan">
+        <span data-zh>榮耀神 · 享受神 · 傳揚神</span>
+        <span data-en>Glorify · Enjoy · Proclaim God</span>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">
+        <span data-zh>頁面導覽</span><span data-en>Navigation</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="news.html"><span data-zh>最新消息</span><span data-en>News</span></a></li>
+        <li><a href="about.html"><span data-zh>認識安提阿</span><span data-en>About</span></a></li>
+        <li><a href="sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a></li>
+        <li><a href="courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a></li>
+        <li><a href="3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a></li>
+        <li><a href="support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">
+        <span data-zh>聯絡資訊</span><span data-en>Contact</span>
+      </div>
+      <div class="footer-info">
+        <p>📍 <a href="https://goo.gl/maps/uirdbHYFjBQz1rMK7" target="_blank">7457 Edmonds St, Burnaby BC</a></p>
+        <p>📞 604.440.3504</p>
+        <p>🔗 <a href="mailto:antiochchurch.bc@gmail.com">antiochchurch.bc@gmail.com</a></p>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">
+        <span data-zh>支持我們</span><span data-en>Support</span>
+      </div>
+      <div class="footer-info">
+        <p>
+          <strong style="color:rgba(255,255,255,0.5)">E-Transfer:</strong><br/>
+          <a href="mailto:antiochchurch.bc@gmail.com">antiochchurch.bc@gmail.com</a>
+        </p>
+        <p style="margin-top:6px">
+          <strong style="color:rgba(255,255,255,0.5)">CRA #:</strong> 890849342 RR 0001
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 安提阿教會 Antioch Church · Burnaby, BC · All rights reserved
+  </div>
+</footer>
+
+
+<!-- ── SCRIPTS ──────────────────────────────────────────────── -->
+<!--
+  Load order:
+    1. sermons.js  — data, search/filter logic, YouTube modal, buildSermonList()
+    2. nav.js      — scroll behaviour, language toggle (defines toggleLang)
+    3. reveal.js   — scroll-fade animations
+  Then inline script wires everything together.
+-->
+<script src="../js/sermons.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/reveal.js"></script>
+
+<script>
+  /*
+   * Page-level initialisation for sermons.html
+   *
+   * 1. Build the search bar and render the initial filtered sermon list
+   * 2. Patch toggleLang so sermon rows re-render when language switches
+   */
+
+  // Initialise search bar — injects HTML into #sermon-search-bar
+  // and renders the first batch of sermon rows into #full-sermon-list
+  initSermonSearch('sermon-search-bar', 'full-sermon-list');
+
+  // Patch language toggle: after switching language, rebuild the
+  // search bar (updates placeholder / option text) and re-render rows
+  const _origToggle = window.toggleLang;
+  window.toggleLang = function () {
+    _origToggle();                                          // switch body class + save to localStorage
+    initSermonSearch('sermon-search-bar', 'full-sermon-list'); // rebuild with new language
+  };
+</script>
+
+</body>
+</html>
