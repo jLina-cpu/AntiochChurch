@@ -32,7 +32,7 @@ const SERMONS = [
     ref:        '馬太福音 / Matt 22:15–22',
     desc_zh:    '',
     desc_en:    '',
-    youtube:    'https://www.youtube.com/watch?v=pccKuZHaA8U'
+    youtube:    'https://youtu.be/pccKuZHaA8U?si=85igHHBkoJOpvSKe'
   },
   {
     zh:         '你準備好了嗎？',
@@ -43,7 +43,7 @@ const SERMONS = [
     ref:        '馬太福音 / Matt 22:1–14',
     desc_zh:    '',
     desc_en:    '',
-    youtube:    'https://www.youtube.com/watch?v=BaMb5mXCYIU'
+    youtube:    'https://youtu.be/BaMb5mXCYIU?si=thXRTr7R7S4e6i_t'
   },
   {
     zh:         '這園子，是誰的？',
@@ -54,7 +54,7 @@ const SERMONS = [
     ref:        '馬太福音 / Matt 21:33–46',
     desc_zh:    '',
     desc_en:    '',
-    youtube:    'https://www.youtube.com/watch?v=NQCRtBikZfU'
+    youtube:    'https://youtu.be/NQCRtBikZfU?si=sS0qDrmj_31GYu4C'
   },
   {
     zh:         '你在算計什麼？',
