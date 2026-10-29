@@ -1,0 +1,749 @@
+/*
+ * ============================================================
+ * ANTIOCH CHURCH — SHARED DESIGN SYSTEM
+ * main.css
+ *
+ * This file is imported by every page on the site.
+ * It defines the visual language: colours, typography,
+ * spacing, shared components (nav, footer, buttons, reveals).
+ *
+ * Structure:
+ *   1. Design tokens (CSS custom properties)
+ *   2. Reset & base
+ *   3. Typography
+ *   4. Shared layout utilities
+ *   5. Navigation (shared across all pages)
+ *   6. Footer (shared across all pages)
+ *   7. Buttons
+ *   8. Scroll-reveal animation
+ *   9. Page hero (shared pattern)
+ *  10. Responsive breakpoints
+ * ============================================================
+ */
+
+
+/* ── 1. DESIGN TOKENS ──────────────────────────────────────── */
+:root {
+  /* Brand colours */
+  --gold:       #C8902A;
+  --gold-lt:    #E8B86D;
+  --gold-pale:  rgba(200, 144, 42, 0.10);
+  --gold-glow:  rgba(200, 144, 42, 0.35);
+
+  /* Surface colours */
+  --cream:      #FDF9F3;
+  --warm:       #F7F0E4;
+  --paper:      #FFFCF7;
+  --charcoal:   #1E1D1B;
+  --mid:        #5C5A55;
+  --light:      #9B9790;
+
+  /* Accent */
+  --green-dark: #1a2a1a;
+
+  /* Typography stacks */
+  --serif:      'Playfair Display', Georgia, serif;
+  --zh:         'Noto Serif TC', serif;
+  --sans:       'Inter', system-ui, sans-serif;
+
+  /* Spacing scale */
+  --space-xs:   8px;
+  --space-sm:   16px;
+  --space-md:   32px;
+  --space-lg:   64px;
+  --space-xl:   100px;
+
+  /* Radius */
+  --radius-sm:  8px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+
+  /* Animation */
+  --ease:       cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration:   0.45s;
+}
+
+
+/* ── 2. RESET & BASE ───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--charcoal);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Images never overflow their container */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Links inherit colour by default */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Buttons reset */
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ── 3. TYPOGRAPHY ─────────────────────────────────────────── */
+
+/*
+ * We use three font families:
+ *   --serif  : Playfair Display — warm editorial headings (English)
+ *   --zh     : Noto Serif TC    — Chinese headings & body
+ *   --sans   : Inter            — UI, labels, captions, meta
+ *
+ * Font size scale uses clamp() for fluid responsive sizing.
+ */
+
+.t-eyebrow {
+  /* Small all-caps label above section titles */
+  font-family: var(--sans);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* Decorative rule after the eyebrow label */
+.t-eyebrow::after {
+  content: '';
+  height: 1px;
+  width: 50px;
+  background: var(--gold);
+  opacity: 0.30;
+}
+
+.t-h1 {
+  /* Page-level hero heading */
+  font-family: var(--zh);
+  font-size: clamp(42px, 8vw, 88px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: 0.06em;
+}
+
+.t-h2 {
+  /* Section heading */
+  font-family: var(--zh);
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--charcoal);
+  margin-bottom: 8px;
+}
+
+.t-h2-sub {
+  /* Italic subtitle under section heading */
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(14px, 1.8vw, 20px);
+  color: var(--gold);
+  opacity: 0.75;
+  margin-bottom: 48px;
+}
+
+.t-body {
+  font-family: var(--zh);
+  font-size: 15px;
+  line-height: 2.0;
+  color: var(--mid);
+}
+
+.t-meta {
+  /* Small metadata text — dates, speakers, tags */
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--light);
+}
+
+/* English language overrides */
+.lang-en .t-h1   { font-family: var(--serif); letter-spacing: 0.02em; }
+.lang-en .t-h2   { font-family: var(--serif); }
+.lang-en .t-body { font-family: var(--sans); line-height: 1.8; }
+
+
+/* ── 4. LAYOUT UTILITIES ───────────────────────────────────── */
+
+/* Centred content container with max-width */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Generic section padding */
+.section {
+  padding: var(--space-xl) 48px;
+}
+
+/* Alternate background for section rhythm */
+.section--cream  { background: var(--cream); }
+.section--warm   { background: var(--warm); }
+.section--paper  { background: var(--paper); }
+.section--dark   { background: linear-gradient(160deg, #1E1D1B, #2E2B25); color: white; }
+.section--green  { background: linear-gradient(135deg, var(--green-dark), #2a3a2a); color: white; }
+
+/* Two-column grid used on multiple pages */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* Scripture reference badge */
+.scripture-badge {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(200, 144, 42, 0.35);
+  color: var(--gold);
+}
+
+/* Category / topic tag pill */
+.tag {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--gold-pale);
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.tag--white {
+  background: rgba(200, 144, 42, 0.8);
+  color: white;
+}
+
+
+/* ── 5. NAVIGATION ─────────────────────────────────────────── */
+
+/*
+ * The nav is fixed at the top. It starts transparent (for use
+ * over hero images) and gains a frosted-glass background once
+ * the user scrolls past 60px. The .scrolled class is toggled
+ * by nav.js.
+ */
+
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 72px;
+  transition: background var(--duration) var(--ease),
+              box-shadow var(--duration) var(--ease);
+}
+
+.nav.scrolled {
+  background: rgba(253, 249, 243, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 rgba(200, 144, 42, 0.15);
+}
+
+/* Logo area */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.nav-logo img {
+  height: 52px;          /* slightly larger now text is removed */
+  width: auto;
+  /* White over hero images; original colour once nav has background */
+  filter: brightness(0) invert(1);
+  transition: filter var(--duration) var(--ease);
+}
+
+.nav.scrolled .nav-logo img {
+  /* Original colour once nav has background */
+  filter: none;
+}
+
+.nav-logo-zh {
+  font-family: var(--zh);
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  transition: color var(--duration) var(--ease);
+}
+
+.nav-logo-en {
+  font-family: var(--sans);
+  font-size: 10px;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  transition: color var(--duration) var(--ease);
+}
+
+.nav.scrolled .nav-logo-zh { color: var(--charcoal); }
+.nav.scrolled .nav-logo-en { color: var(--light); }
+
+/* Nav links list */
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: clamp(6px, 0.8vw, 12px);
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--zh);
+  font-size: 14px;
+  color: rgba(255,255,255,0.94);
+  letter-spacing: 0.035em;
+  white-space: nowrap;
+  padding: 8px 8px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.nav.scrolled .nav-links a { color: var(--mid); }
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--gold) !important;
+  background: rgba(200,144,42,0.08);
+}
+
+/* Right-side controls */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Language toggle button */
+.lang-btn {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  color: white;
+  transition: all 0.25s;
+}
+
+.nav.scrolled .lang-btn {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.lang-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white !important;
+}
+
+/* Facebook icon link */
+.nav-fb {
+  color: rgba(255,255,255,0.80);
+  line-height: 0;
+  transition: color 0.2s;
+}
+
+.nav.scrolled .nav-fb { color: var(--gold); }
+.nav-fb:hover { color: var(--gold-lt) !important; }
+
+/* Hamburger (mobile only, hidden on desktop) */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: white;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.nav.scrolled .nav-hamburger span { background: var(--charcoal); }
+
+/* Full-screen mobile menu */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  padding: 100px 40px 40px;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.mobile-menu.open { transform: none; }
+
+.mobile-menu a {
+  font-family: var(--zh);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--charcoal);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(200,144,42,0.10);
+  display: block;
+  transition: color 0.2s;
+}
+
+.mobile-menu a:hover { color: var(--gold); }
+
+
+/* ── 6. FOOTER ─────────────────────────────────────────────── */
+
+/*
+ * Consistent across all 7 pages. Dark background, three columns:
+ * brand | navigation | contact + support.
+ */
+
+.footer {
+  background: #131210;
+  color: rgba(255,255,255,0.55);
+  padding: 72px 48px 36px;
+}
+
+.footer-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin-bottom: 60px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 44px;
+  max-width: 1200px;
+  margin: 0 auto 56px;
+}
+
+.footer-logo img {
+  height: 50px;
+  width: auto;
+  opacity: 0.75;
+  margin-bottom: 14px;
+  filter: brightness(0) invert(0.65);
+}
+
+.footer-brand-zh {
+  font-family: var(--zh);
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 6px;
+}
+
+.footer-brand-slogan {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.footer-fb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold-lt);
+  font-size: 13px;
+  font-family: var(--sans);
+}
+
+.footer-heading {
+  font-family: var(--sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.footer-links a {
+  font-family: var(--zh);
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--gold-lt); }
+
+.footer-info p {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.40);
+  line-height: 1.75;
+  margin-bottom: 4px;
+}
+
+.footer-info a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-bottom {
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: rgba(255,255,255,0.18);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+/* ── 7. BUTTONS ────────────────────────────────────────────── */
+
+/* Base button style — add a variant class */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 38px;
+  border-radius: 40px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+}
+
+/* Gold filled — primary CTA */
+.btn--gold {
+  background: var(--gold);
+  color: white;
+  box-shadow: 0 8px 28px var(--gold-glow);
+}
+
+.btn--gold:hover {
+  transform: translateY(-2px);
+  background: var(--gold-lt);
+  box-shadow: 0 14px 40px var(--gold-glow);
+}
+
+/* Ghost / outline — secondary CTA */
+.btn--ghost {
+  border: 1.5px solid rgba(255,255,255,0.50);
+  color: white;
+  backdrop-filter: blur(8px);
+}
+
+.btn--ghost:hover {
+  border-color: white;
+  background: rgba(255,255,255,0.10);
+}
+
+/* Gold outline on light backgrounds */
+.btn--outline {
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+}
+
+.btn--outline:hover {
+  background: var(--gold);
+  color: white;
+}
+
+
+/* ── 8. SCROLL-REVEAL ──────────────────────────────────────── */
+
+/*
+ * Elements with .reveal start hidden and fade+slide in when
+ * they enter the viewport. Triggered by IntersectionObserver
+ * in js/reveal.js. Direction variants: .from-left, .from-right
+ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.70s ease, transform 0.70s ease;
+}
+
+.reveal.from-left  { transform: translateX(-28px); }
+.reveal.from-right { transform: translateX(28px); }
+
+/* Once .visible is added by JS, element animates in */
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ── 9. PAGE HERO ───────────────────────────────────────────── */
+
+/*
+ * Shared hero pattern used on inner pages (not the homepage
+ * which has its own slideshow hero). A large photograph with
+ * a dark overlay and centred text.
+ */
+
+.page-hero {
+  position: relative;
+  height: 60vh;
+  min-height: 400px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding-top: 72px; /* account for fixed nav */
+}
+
+.page-hero__bg {
+  position: absolute;
+  inset: 0;
+}
+
+.page-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Gradient overlay for text legibility */
+.page-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(18,16,12,0.25) 0%,
+    rgba(18,16,12,0.65) 100%
+  );
+}
+
+.page-hero__content {
+  position: relative;
+  z-index: 1;
+  padding: 48px 48px 56px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.page-hero__eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 12px;
+}
+
+.page-hero__title {
+  font-family: var(--zh);
+  font-size: clamp(36px, 6vw, 70px);
+  font-weight: 600;
+  color: white;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  margin-bottom: 8px;
+}
+
+.page-hero__subtitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(14px, 2vw, 20px);
+  color: rgba(255,255,255,0.75);
+}
+
+
+/* ── 10. RESPONSIVE ────────────────────────────────────────── */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .section { padding: 80px 32px; }
+  .two-col { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .nav { padding: 0 32px; }
+  .page-hero__content { padding: 32px 32px 44px; }
+}
+
+@media (max-width: 900px) and (min-width: 769px) {
+  .nav { padding: 0 20px; }
+  .nav-links { gap: 2px; }
+  .nav-links a { font-size: 12px; padding: 8px 5px; }
+  .nav-right { gap: 8px; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .section { padding: 64px 20px; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }     /* hidden — use hamburger */
+  .nav-hamburger { display: flex; }
+  .footer { padding: 56px 24px 28px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .page-hero__content { padding: 24px 20px 36px; }
+  .btn { padding: 12px 28px; font-size: 13px; }
+}
