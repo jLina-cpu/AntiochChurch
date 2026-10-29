@@ -24,15 +24,81 @@
 
 const SERMONS = [
   {
+    zh:         '你把自己交給了誰？',
+    en:         'To whom have you entrusted yourself to?',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-10-25',
+    ref:        '馬太福音 / Matt 22:15–22',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://www.youtube.com/watch?v=pccKuZHaA8U'
+  },
+  {
+    zh:         '你準備好了嗎？',
+    en:         'Are You Ready?',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-10-11',
+    ref:        '馬太福音 / Matt 22:1–14',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://www.youtube.com/watch?v=BaMb5mXCYIU'
+  },
+  {
+    zh:         '這園子，是誰的？',
+    en:         'Whose Vineyard Is This?',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-10-04',
+    ref:        '馬太福音 / Matt 21:33–46',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://www.youtube.com/watch?v=NQCRtBikZfU'
+  },
+  {
+    zh:         '你在算計什麼？',
+    en:         'What are you calculating?',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-09-27',
+    ref:        '馬太福音 / Matt 21:23–32',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://www.youtube.com/watch?v=_hSjF2rvBok'
+  },
+  {
+    zh:         '我是不是吃虧了?',
+    en:         'Am I Getting the Raw Deal?',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-09-13',
+    ref:        '馬太福音 / Matt 20:1–16',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://www.youtube.com/watch?v=oMPplrOu3zw'
+  },
+  {
+    zh:         '那本還沒闔上的帳',
+    en:         'The Ledger We Never Closed',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-09-06',
+    ref:        '馬太福音 / Matt 18:21–35',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://www.youtube.com/watch?v=3p2p0Lyfw0s'
+  },
+  {
     zh:         '在沈默中引導的上帝',
     en:         'God Who Guides in Silence',
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
     date:       '2026-08-23',
-    ref:        '創世記 / Gen 24:1–33, 50–61',
+    ref:        '創世記 / Gen 24',
     desc_zh:    '當上帝沈默時，祂仍在引導。透過亞伯拉罕僕人的旅程，看見上帝在靜默中的帶領。',
     desc_en:    "When God is silent, He is still guiding. Through Abraham's servant's journey, we see God's leadership in stillness.",
-    youtube:    'https://youtu.be/S7L1oVZ8jNQ'
+    youtube:    'https://www.youtube.com/watch?v=r52-CCoQCv4'
   },
   {
     zh:         '更像耶穌之路',
@@ -40,21 +106,21 @@ const SERMONS = [
     speaker:    '白恩拾牧師',
     speaker_en: 'Pastor Victor Pai',
     date:       '2026-08-09',
-    ref:        '腓立比書 / Phil 3:7–14',
-    desc_zh:    '保羅捨棄一切追求基督的心志，如何成為我們效法的榜樣。',
-    desc_en:    "Paul's single-minded pursuit of Christ — giving up everything — becomes our model for transformation.",
-    youtube:    'https://www.youtube.com/watch?v=LQHZGuzYOBM'
+    ref:        '腓立比書 / Phil 3:17–21',
+    desc_zh:    '保羅勸勉信徒效法敬虔榜樣，並仰望天上的國民身分。',
+    desc_en:    'Paul urges believers to follow godly examples and look forward to their citizenship in heaven.',
+    youtube:    'https://www.youtube.com/watch?v=Ix4Lbt1YUYA'
   },
   {
     zh:         '當上帝要的不是剩下的',
     en:         'When God Wants More Than the Leftovers',
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
     date:       '2026-08-02',
     ref:        '創世記 / Gen 22:1–14',
     desc_zh:    '亞伯拉罕獻以撒的故事揭示：上帝不要我們生命的剩餘，祂要的是全部。',
     desc_en:    "The story of Abraham and Isaac reveals that God doesn't want our leftovers — He calls for our all.",
-    youtube:    'https://www.youtube.com/watch?v=6fy9C-MCNVY'
+    youtube:    'https://www.youtube.com/watch?v=9xVXO2X6_LA'
   },
   {
     zh:         '卸下重擔：在憂慮中信靠神',
@@ -62,21 +128,21 @@ const SERMONS = [
     speaker:    '白恩拾牧師',
     speaker_en: 'Pastor Victor Pai',
     date:       '2026-07-26',
-    ref:        '腓立比書 / Phil 4:6–7',
+    ref:        '腓立比書 / Phil 4:4–7',
     desc_zh:    '聖經怎麼說憂慮？如何在禱告中將重擔交給上帝，得著超越理解的平安。',
     desc_en:    "What does Scripture say about worry? How to surrender burdens through prayer and receive peace beyond understanding.",
-    youtube:    'https://www.youtube.com/watch?v=9xVXO2X6_LA'
+    youtube:    'https://www.youtube.com/watch?v=6fy9C-MCNVY'
   },
   {
     zh:         '如何進入神命定的福？',
-    en:         'How to Enter the Blessing God Destined for You',
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
+    en:         'How to Enter the Blessing Destined by God?',
+    speaker:    '林冬娟牧師',
+    speaker_en: 'Ruth Lin',
     date:       '2026-07-12',
-    ref:        '創世記 / Gen 15:1–6',
-    desc_zh:    '上帝對亞伯拉罕的應許，是進入神命定之福的鑰匙。信心、等候與順服。',
-    desc_en:    "God's promise to Abraham holds the key to entering His destined blessing. Faith, waiting, and obedience.",
-    youtube:    'https://www.youtube.com/watch?v=Ix4Lbt1YUYA'
+    ref:        '詩篇 / Ps 133',
+    desc_zh:    '詩篇133篇描繪弟兄姊妹同心相處的美善與福分。',
+    desc_en:    'Psalm 133 celebrates the goodness and blessing of living together in unity.',
+    youtube:    'https://www.youtube.com/watch?v=LQHZGuzYOBM'
   },
   {
     zh:         '上主豈有難成的事？',
@@ -87,73 +153,7 @@ const SERMONS = [
     ref:        '創世記 / Gen 18:1–15, 21:5–6',
     desc_zh:    '透過亞伯拉罕與撒拉的故事，探索上帝恩典與應許的奧秘。',
     desc_en:    "Through the story of Abraham and Sarah, we explore the mystery of God's unfailing grace and promise.",
-    youtube:    'https://www.youtube.com/watch?v=r52-CCoQCv4'
-  },
-  {
-    zh:         '作無瑕的工人',
-    en:         'An Approved Worker',
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
-    date:       '2026-06-28',
-    ref:        '使徒行傳 / Acts 6:1–7',
-    desc_zh:    '教會如何在服事中建立健全的工人，榮耀主名。',
-    desc_en:    'How the church builds faithful workers in ministry, to the glory of God.',
-    youtube:    null
-  },
-  {
-    zh:         '父親節反思：屬靈親子關係',
-    en:         "Spiritual Parenting: Father's Day Reflection",
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
-    date:       '2026-06-21',
-    ref:        '哥林多前書 / 1 Cor 4:14–21',
-    desc_zh:    '從保羅對哥林多教會的父愛，反思信仰中的屬靈親子關係。',
-    desc_en:    "Reflecting on spiritual parenting through Paul's fatherly love for the Corinthian church.",
-    youtube:    null
-  },
-  {
-    zh:         '當人無法理解神念高度的時候',
-    en:         "When We Cannot Comprehend God's Ways",
-    speaker:    '林冬娟',
-    speaker_en: 'Ruth Lin',
-    date:       '2026-06-14',
-    ref:        '以賽亞書 / Isa 55:8–9',
-    desc_zh:    '面對人生的困惑與不解，如何在信仰中找到安息。',
-    desc_en:    'Finding rest in faith when life brings confusion and unanswered questions.',
-    youtube:    null
-  },
-  {
-    zh:         '順服屬靈權柄',
-    en:         'Obeying Spiritual Authority',
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
-    date:       '2026-06-07',
-    ref:        '哥林多後書 / 2 Cor 10:8; 12:5–13',
-    desc_zh:    '聖經如何教導我們在教會中順服與尊重屬靈的權柄。',
-    desc_en:    'How Scripture teaches us to honour and submit to spiritual authority in the church.',
-    youtube:    null
-  },
-  {
-    zh:         '你習慣跟誰的？',
-    en:         'Whose Guidance Do You Follow?',
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
-    date:       '2026-05-31',
-    ref:        '羅馬書 / Rom 8:1–8, 12–14',
-    desc_zh:    '在生命的每個選擇中，我們是跟隨肉體的衝動，還是聖靈的引導？',
-    desc_en:    'In every choice of life, do we follow the impulse of the flesh or the leading of the Spirit?',
-    youtube:    null
-  },
-  {
-    zh:         '如何經歷聖靈中的盼望',
-    en:         'Experiencing Hope in the Holy Spirit',
-    speaker:    '白恩拾牧師',
-    speaker_en: 'Pastor Victor Pai',
-    date:       '2026-05-24',
-    ref:        '羅馬書 / Rom 15:12–13',
-    desc_zh:    '聖靈如何在我們生命中澆灌盼望，使我們在等待中喜樂。',
-    desc_en:    'How the Holy Spirit pours hope into our lives, enabling us to rejoice even while waiting.',
-    youtube:    null
+    youtube:    'https://www.youtube.com/watch?v=S7L1oVZ8jNQ'
   },
 ];
 
