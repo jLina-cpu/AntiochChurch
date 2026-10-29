@@ -29,6 +29,9 @@
   --gold-lt:    #E8B86D;
   --gold-pale:  rgba(200, 144, 42, 0.10);
   --gold-glow:  rgba(200, 144, 42, 0.35);
+  --wine:       #451727;
+  --wine-rgb:   69, 23, 39;
+  --wine-pale:  rgba(69, 23, 39, 0.08);
 
   /* Surface colours */
   --cream:      #FDF9F3;
@@ -246,8 +249,8 @@ button {
   text-transform: uppercase;
   padding: 4px 12px;
   border-radius: 20px;
-  background: var(--gold-pale);
-  color: var(--gold);
+  background: var(--wine-pale);
+  color: var(--wine);
   margin-bottom: 12px;
 }
 
@@ -357,6 +360,13 @@ button {
   background: rgba(200,144,42,0.08);
 }
 
+.nav.scrolled .nav-links a:hover,
+.nav.scrolled .nav-links a:focus-visible,
+.nav.scrolled .nav-links a.active {
+  color: var(--wine) !important;
+  background: var(--wine-pale);
+}
+
 /* Right-side controls */
 .nav-right {
   display: flex;
@@ -444,7 +454,8 @@ button {
   transition: color 0.2s;
 }
 
-.mobile-menu a:hover { color: var(--gold); }
+.mobile-menu a:hover,
+.mobile-menu a:focus-visible { color: var(--wine); }
 
 
 /* ── 6. FOOTER ─────────────────────────────────────────────── */
@@ -462,7 +473,7 @@ button {
 
 .footer-rule {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--wine), var(--gold), var(--wine), transparent);
   margin-bottom: 60px;
 }
 
@@ -605,12 +616,12 @@ button {
 
 /* Gold outline on light backgrounds */
 .btn--outline {
-  border: 1.5px solid var(--gold);
-  color: var(--gold);
+  border: 1.5px solid var(--wine);
+  color: var(--wine);
 }
 
 .btn--outline:hover {
-  background: var(--gold);
+  background: var(--wine);
   color: white;
 }
 

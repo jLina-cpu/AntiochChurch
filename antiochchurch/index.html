@@ -55,12 +55,19 @@
       height: 100vh;
       min-height: 600px;
       overflow: hidden;
+      --hero-image-brightness: 0.85;
+      --hero-overlay-opacity: 0.12;
+      --hero-card-blur: 15px;
+      --hero-card-opacity: 0.85;
+      --hero-card-surface: rgba(var(--wine-rgb),0.24);
     }
 
     .hero-slideshow {
       position: absolute;
       inset: 0;
       z-index: 0;
+      filter: brightness(var(--hero-image-brightness));
+      transition: filter 0.4s ease;
     }
 
     .hero-slide {
@@ -75,16 +82,17 @@
 
     .hero-slide.active { opacity: 1; }
 
-    /* Dark gradient so white text is always readable */
     .hero-overlay {
       position: absolute;
       inset: 0;
       z-index: 1;
       background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.4),
-        rgba(0,0,0,0.4)
+        rgba(0,0,0,0.35),
+        rgba(0,0,0,0.35)
       );
+      opacity: var(--hero-overlay-opacity);
+      transition: opacity 0.4s ease;
     }
 
     /* Centred content over the slideshow */
@@ -107,12 +115,36 @@
       width: min(100%, 820px);
       padding: clamp(28px, 4vw, 42px) clamp(20px, 5vw, 52px)
                clamp(40px, 5vw, 58px);
-      background: rgba(255,255,255,0.06);
+      background: var(--hero-card-surface);
       border: 1px solid rgba(255,255,255,0.16);
       border-radius: 20px;
       box-shadow: 0 16px 48px rgba(0,0,0,0.14);
-      -webkit-backdrop-filter: blur(8px);
-      backdrop-filter: blur(8px);
+      opacity: var(--hero-card-opacity);
+      -webkit-backdrop-filter: blur(var(--hero-card-blur));
+      backdrop-filter: blur(var(--hero-card-blur));
+      transition:
+        background-color 0.3s ease,
+        opacity 0.4s ease,
+        backdrop-filter 0.4s ease,
+        -webkit-backdrop-filter 0.4s ease;
+    }
+
+    .hero:has(.hero-copy:hover),
+    .hero:has(.hero-copy:focus-within) {
+      --hero-image-brightness: 0.55;
+      --hero-overlay-opacity: 0.12;
+      --hero-card-blur: 24px;
+      --hero-card-opacity: 1;
+      --hero-card-surface: rgba(var(--wine-rgb),0.62);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .hero:hover:not(:has(.hero-copy:hover)):not(:has(.hero-copy:focus-within)) {
+        --hero-image-brightness: 1;
+        --hero-overlay-opacity: 0;
+        --hero-card-blur: 4px;
+        --hero-card-opacity: 0.4;
+      }
     }
 
     .hero-eyebrow {
@@ -692,7 +724,11 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, rgba(18,16,12,0.50), rgba(18,16,12,0.65));
+      background: linear-gradient(
+        to bottom,
+        rgba(var(--wine-rgb),0.38),
+        rgba(18,16,12,0.68)
+      );
     }
 
     .invitation-content {
