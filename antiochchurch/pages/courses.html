@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<!--
+  pages/courses.html — 圣经与神学课程 Courses & Formation
+  Content sourced from antiochchurch.ca/courses.html
+-->
+<html lang="zh-TW" id="html-root">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>圣经与神学课程 · 安提阿教會 Antioch Church</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <style>
+    [data-en]{display:none}[data-zh]{display:block}
+    span[data-en]{display:none}span[data-zh]{display:inline}
+    .lang-en [data-en]{display:block}.lang-en [data-zh]{display:none}
+    .lang-en span[data-en]{display:inline}.lang-en span[data-zh]{display:none}
+
+    /* Course cards */
+    .course-card {
+      background: var(--paper);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      border: 1px solid rgba(200,144,42,0.10);
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .course-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 56px rgba(200,144,42,0.10);
+      border-color: rgba(200,144,42,0.28);
+    }
+    .course-icon { font-size: 40px; margin-bottom: 20px; }
+    .course-title {
+      font-family: var(--zh); font-size: 20px; font-weight: 600;
+      color: var(--charcoal); margin-bottom: 12px; line-height: 1.35;
+    }
+    .lang-en .course-title { font-family: var(--sans); }
+    .course-desc {
+      font-family: var(--zh); font-size: 14px; line-height: 1.9;
+      color: var(--mid); margin-bottom: 24px;
+    }
+    .lang-en .course-desc { font-family: var(--sans); line-height: 1.75; }
+
+    /* Lesson list inside a course */
+    .lesson-list { margin-top: 20px; border-top: 1px solid rgba(200,144,42,0.10); padding-top: 20px; }
+    .lesson-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid rgba(200,144,42,0.06);
+      font-size: 13px;
+    }
+    .lesson-date { font-family: var(--sans); color: var(--light); flex-shrink: 0; width: 90px; }
+    .lesson-title { font-family: var(--zh); color: var(--charcoal); line-height: 1.5; }
+    .lang-en .lesson-title { font-family: var(--sans); }
+    .lesson-speaker { font-family: var(--sans); color: var(--gold); font-size: 11.5px; margin-top: 2px; }
+
+    /* Show/hide toggle for lesson list */
+    .lesson-toggle {
+      font-family: var(--sans); font-size: 12px; color: var(--gold);
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
+      margin-top: 4px; background: none; border: none; padding: 0;
+      transition: gap 0.2s;
+    }
+    .lesson-toggle:hover { gap: 8px; }
+    .lesson-list.hidden { display: none; }
+
+    /* Devotional quotes card */
+    .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+    .quote-mini {
+      padding: 16px 20px;
+      border-left: 3px solid var(--gold);
+      background: rgba(200,144,42,0.04);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+    .quote-mini-text { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--charcoal); line-height: 1.65; margin-bottom: 6px; }
+    .quote-mini-attr { font-family: var(--sans); font-size: 11px; color: var(--light); }
+
+    @media(max-width:768px) {
+      .quote-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="../index.html" class="nav-logo">
+    <img src="../images/logo.png" alt="Antioch Church Logo"/>
+    
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html"><span data-zh>首頁</span><span data-en>Home</span></a></li>
+    <li><a href="news.html"><span data-zh>最新消息</span><span data-en>News</span></a></li>
+    <li><a href="about.html"><span data-zh>認識安提阿</span><span data-en>About</span></a></li>
+    <li><a href="sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a></li>
+    <li><a href="courses.html" class="active"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a></li>
+    <li><a href="3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a></li>
+    <li><a href="support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+    <a class="nav-fb" href="https://www.facebook.com/groups/119017864946632/" target="_blank" aria-label="Facebook">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.88v2.25h3.32l-.53 3.49h-2.79V24C19.62 23.1 24 18.1 24 12.07z"/></svg>
+    </a>
+    <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="../index.html"><span data-zh>首頁</span><span data-en>Home</span></a>
+  <a href="news.html"><span data-zh>最新消息</span><span data-en>News</span></a>
+  <a href="about.html"><span data-zh>認識安提阿</span><span data-en>About Us</span></a>
+  <a href="sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a>
+  <a href="courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a>
+  <a href="3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a>
+  <a href="support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero__bg"><img src="../images/piano.jpeg" alt="Learning and formation"/></div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__content">
+    <div class="page-hero__eyebrow"><span data-zh>在真理中成長</span><span data-en>Learning & Formation</span></div>
+    <div class="page-hero__title"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></div>
+    <div class="page-hero__subtitle"><span data-zh>透過查考聖經與神學培訓，建立信仰根基</span><span data-en>Building faith through Scripture study and theological formation</span></div>
+  </div>
+</div>
+
+<section class="section section--paper">
+  <div class="container">
+
+    <!-- INTRO -->
+    <div class="reveal" style="max-width:680px;margin-bottom:64px">
+      <div class="t-eyebrow"><span data-zh>靈修資源</span><span data-en>Spiritual Resources</span></div>
+      <h2 class="t-h2"><span data-zh>學習是信仰的一部分</span><span data-en>Learning as Part of Faith</span></h2>
+      <div class="t-h2-sub"><span data-zh>Grow in Knowledge & Faith</span><span data-en>在知識與信仰中成長</span></div>
+      <p class="t-body">
+        <span data-zh>安提阿教會重視聖經教導與神學培訓。我們相信，健康的信仰需要透過持續的查考聖經、神學反省與靈修操練來建立。以下課程資源，歡迎弟兄姐妹自由使用。</span>
+        <span data-en>Antioch Church places great value on biblical teaching and theological formation. We believe healthy faith is built through ongoing Scripture study, theological reflection, and spiritual discipline. The following course resources are freely available to all.</span>
+      </p>
+    </div>
+
+    <!-- COURSE 1: 圣经与神学课程 (renamed per requirements) -->
+    <div class="course-card reveal" style="margin-bottom:24px">
+      <div class="course-icon">📖</div>
+      <div class="tag"><span data-zh>聖經研讀</span><span data-en>Bible Study</span></div>
+      <!-- This name is required by the design brief — do not change -->
+      <div class="course-title">圣经与神学课程</div>
+      <div class="course-desc">
+        <span data-zh>系統性研讀舊約聖經各書卷，以正確的解經原理認識上帝的話語。此系列由白恩拾牧師主講，帶領弟兄姐妹逐書卷深度研讀舊約，涵蓋創世記、出埃及記、利未記、申命記，以及先知書、詩歌智慧文學等。</span>
+        <span data-en>Systematic study of Old Testament books, guided by sound principles of biblical interpretation. Led by Pastor Victor Pai, this series takes participants through an in-depth study of the Old Testament — from Genesis and Exodus through the Prophets and Wisdom literature.</span>
+      </div>
+      <button class="lesson-toggle" onclick="toggleLessons('ot')">
+        <span data-zh>查看課程內容</span><span data-en>View Lessons</span> ▾
+      </button>
+      <div class="lesson-list hidden" id="lessons-ot">
+        <div class="lesson-item"><div class="lesson-date">2013-08-10</div><div><div class="lesson-title"><span data-zh>創世記 (1)</span><span data-en>Genesis (1)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2013-08-14</div><div><div class="lesson-title"><span data-zh>創世記 (2)</span><span data-en>Genesis (2)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2013-08-21</div><div><div class="lesson-title"><span data-zh>創世記 (3)</span><span data-en>Genesis (3)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2013-08-28</div><div><div class="lesson-title"><span data-zh>出埃及記</span><span data-en>Exodus</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2013-09-04</div><div><div class="lesson-title"><span data-zh>利未記</span><span data-en>Leviticus</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2013-09-25</div><div><div class="lesson-title"><span data-zh>民數記</span><span data-en>Numbers</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2013-10-02</div><div><div class="lesson-title"><span data-zh>申命記</span><span data-en>Deuteronomy</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2013-10-16</div><div><div class="lesson-title"><span data-zh>約書亞記</span><span data-en>Joshua</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div style="padding:10px 0;font-family:var(--sans);font-size:12px;color:var(--light)">
+          <span data-zh>+ 更多課程，涵蓋歷史書、詩歌書及先知書全系列</span>
+          <span data-en>+ More lessons covering historical books, wisdom literature, and the prophets</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COURSE 2: 約翰福音 -->
+    <div class="course-card reveal" style="margin-bottom:24px">
+      <div class="course-icon">✝️</div>
+      <div class="tag"><span data-zh>新約研讀</span><span data-en>New Testament</span></div>
+      <div class="course-title"><span data-zh>約翰福音深度查經系列</span><span data-en>In-Depth Gospel of John Bible Study</span></div>
+      <div class="course-desc">
+        <span data-zh>以詳細的查經方式深入研讀約翰福音，探索耶穌的神性、道成肉身的奧秘，以及永生的意義。此系列由白恩拾牧師主講，共四課。</span>
+        <span data-en>An in-depth study of the Gospel of John — exploring Jesus' divinity, the mystery of the Incarnation, and the meaning of eternal life. Four sessions led by Pastor Victor Pai.</span>
+      </div>
+      <button class="lesson-toggle" onclick="toggleLessons('john')">
+        <span data-zh>查看課程內容</span><span data-en>View Lessons</span> ▾
+      </button>
+      <div class="lesson-list hidden" id="lessons-john">
+        <div class="lesson-item"><div class="lesson-date">2005-09-02</div><div><div class="lesson-title"><span data-zh>約翰福音深度查經 (1)</span><span data-en>John In-Depth Study (1)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2005-09-16</div><div><div class="lesson-title"><span data-zh>約翰福音深度查經 (2)</span><span data-en>John In-Depth Study (2)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2005-10-14</div><div><div class="lesson-title"><span data-zh>約翰福音深度查經 (3)</span><span data-en>John In-Depth Study (3)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2005-10-28</div><div><div class="lesson-title"><span data-zh>約翰福音深度查經 (4)</span><span data-en>John In-Depth Study (4)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+      </div>
+    </div>
+
+    <!-- COURSE 3: β-Course -->
+    <div class="course-card reveal" style="margin-bottom:24px">
+      <div class="course-icon">🦋</div>
+      <div class="tag"><span data-zh>信仰基礎</span><span data-en>Christian Foundations</span></div>
+      <div class="course-title"><span data-zh>β-Course：基督教教義初探</span><span data-en>β-Course: Introduction to Christian Doctrine</span></div>
+      <div class="course-desc">
+        <span data-zh>系統性探索基督教核心教義，幫助信徒在信仰根基上更加穩固。共九課，涵蓋上帝觀、人觀、基督論、聖靈論、教會論、末世論、啟示論及教會歷史。</span>
+        <span data-en>A systematic exploration of core Christian beliefs to help believers build a stronger faith foundation. Nine lessons covering the doctrines of God, humanity, Christ, the Holy Spirit, the Church, eschatology, revelation, and church history.</span>
+      </div>
+      <button class="lesson-toggle" onclick="toggleLessons('beta')">
+        <span data-zh>查看課程內容</span><span data-en>View Lessons</span> ▾
+      </button>
+      <div class="lesson-list hidden" id="lessons-beta">
+        <div class="lesson-item"><div class="lesson-date">2006-07-22</div><div><div class="lesson-title"><span data-zh>第一課：基督教的人觀</span><span data-en>Lesson 1: The Christian View of Humanity</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-07-29</div><div><div class="lesson-title"><span data-zh>第二課：基督教的上帝觀</span><span data-en>Lesson 2: The Christian View of God</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-07-29</div><div><div class="lesson-title"><span data-zh>第三課：認識耶穌是誰</span><span data-en>Lesson 3: Who Is Jesus?</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-08-12</div><div><div class="lesson-title"><span data-zh>第四課：認識聖靈（附：認識靈恩運動）</span><span data-en>Lesson 4: The Holy Spirit (incl. Charismatic Movement)</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-08-12</div><div><div class="lesson-title"><span data-zh>第五課：認識教會</span><span data-en>Lesson 5: Understanding the Church</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-08-19</div><div><div class="lesson-title"><span data-zh>第六課：終末的盼望——認識末世論</span><span data-en>Lesson 6: Eschatology — The Hope of the End Times</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-08-19</div><div><div class="lesson-title"><span data-zh>第七課：啟示與信仰——認識啟示論</span><span data-en>Lesson 7: Revelation and Faith — Understanding Revelation</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-08-26</div><div><div class="lesson-title"><span data-zh>第八課：認識教會歷史(1)：天主教、東正教和新教</span><span data-en>Lesson 8: Church History (1) — Catholic, Orthodox, Protestant</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+        <div class="lesson-item"><div class="lesson-date">2006-08-26</div><div><div class="lesson-title"><span data-zh>第九課：認識教會歷史(2)：教會歷史概述</span><span data-en>Lesson 9: Church History (2) — Overview</span></div><div class="lesson-speaker">Victor Pai</div></div></div>
+      </div>
+    </div>
+
+    <!-- COURSE 4: Devotional Quotes -->
+    <div class="course-card reveal" style="margin-bottom:48px">
+      <div class="course-icon">🌿</div>
+      <div class="tag"><span data-zh>靈修資源</span><span data-en>Devotional Resources</span></div>
+      <div class="course-title"><span data-zh>名人金句與靈修反省</span><span data-en>Classic Devotional Quotes & Reflection</span></div>
+      <div class="course-desc">
+        <span data-zh>精選教會歷史上偉大信仰前輩的金言——包括奧古斯丁、帕斯卡、C.S. Lewis、Thomas Aquinas 等——以及基督將臨期靈修經文與四週反省材料。</span>
+        <span data-en>Curated wisdom from great Christian thinkers throughout history — including Augustine, Pascal, C.S. Lewis, Thomas Aquinas, and more — alongside a four-week Advent devotional series.</span>
+      </div>
+      <div class="quote-grid">
+        <div class="quote-mini">
+          <div class="quote-mini-text">"A car is made to run on gasoline. God designed the human machine to run on himself. There is no other."</div>
+          <div class="quote-mini-attr">C. S. Lewis</div>
+        </div>
+        <div class="quote-mini">
+          <div class="quote-mini-text">"We do not even know ourselves except through Jesus Christ."</div>
+          <div class="quote-mini-attr">Blaise Pascal, 1623–1662</div>
+        </div>
+        <div class="quote-mini">
+          <div class="quote-mini-text">"主阿，救我們脫離：膽怯懦弱，因為那會使我們不敢面對新的真理。"</div>
+          <div class="quote-mini-attr">肯亞基督徒的禱告 · 白恩拾 中譯</div>
+        </div>
+        <div class="quote-mini">
+          <div class="quote-mini-text">"Life from the Centre is a life of unhurried peace and power. He is at the helm."</div>
+          <div class="quote-mini-attr">Thomas Kelly</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Link to 3R -->
+    <div class="reveal" style="padding:36px;border-radius:var(--radius-lg);background:linear-gradient(135deg,rgba(26,42,26,0.06),rgba(42,58,42,0.04));border:1px solid rgba(74,103,65,0.2);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#4A6741;margin-bottom:8px"><span data-zh>全新課程</span><span data-en>New Program</span></div>
+        <div style="font-family:var(--zh);font-size:18px;font-weight:600;color:var(--charcoal);margin-bottom:6px"><span data-zh>心靈健康操 3R 課程</span><span data-en>3R Soul Fitness Course</span></div>
+        <div style="font-family:var(--zh);font-size:13.5px;color:var(--mid)"><span data-zh>此課程在圣经与神学课程以外，有獨立的頁面介紹。</span><span data-en>This course has its own dedicated page with full information.</span></div>
+      </div>
+      <a href="3r.html" class="btn btn--gold"><span data-zh>認識 3R 課程 →</span><span data-en>Learn About 3R →</span></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-rule"></div>
+  <div class="footer-grid container">
+    <div>
+      <div class="footer-logo"><img src="../images/logo.png" alt="Antioch Church"/></div>
+      <div class="footer-brand-zh"><span data-zh>安提阿教會</span><span data-en>Antioch Church</span></div>
+      <div class="footer-brand-slogan"><span data-zh>榮耀神 · 享受神 · 傳揚神</span><span data-en>Glorify · Enjoy · Proclaim God</span></div>
+    </div>
+    <div>
+      <div class="footer-heading"><span data-zh>頁面導覽</span><span data-en>Navigation</span></div>
+      <ul class="footer-links">
+        <li><a href="news.html"><span data-zh>最新消息</span><span data-en>News</span></a></li>
+        <li><a href="about.html"><span data-zh>認識安提阿</span><span data-en>About</span></a></li>
+        <li><a href="sermons.html"><span data-zh>講道錄音</span><span data-en>Sermons</span></a></li>
+        <li><a href="courses.html"><span data-zh>圣经与神学课程</span><span data-en>Courses</span></a></li>
+        <li><a href="3r.html"><span data-zh>3R 課程</span><span data-en>3R Course</span></a></li>
+        <li><a href="support.html"><span data-zh>支持我們</span><span data-en>Support Us</span></a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading"><span data-zh>聯絡資訊</span><span data-en>Contact</span></div>
+      <div class="footer-info">
+        <p>📍 <a href="https://goo.gl/maps/uirdbHYFjBQz1rMK7" target="_blank">7457 Edmonds St, Burnaby BC</a></p>
+        <p>📞 604.440.3504</p>
+        <p>🔗 <a href="mailto:antiochchurch.bc@gmail.com">antiochchurch.bc@gmail.com</a></p>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading"><span data-zh>支持我們</span><span data-en>Support</span></div>
+      <div class="footer-info">
+        <p><strong style="color:rgba(255,255,255,0.5)">E-Transfer:</strong><br/><a href="mailto:antiochchurch.bc@gmail.com">antiochchurch.bc@gmail.com</a></p>
+        <p style="margin-top:6px"><strong style="color:rgba(255,255,255,0.5)">CRA #:</strong> 890849342 RR 0001</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 安提阿教會 Antioch Church · Burnaby, BC · All rights reserved</div>
+</footer>
+
+<script src="../js/nav.js"></script>
+<script src="../js/reveal.js"></script>
+<script>
+  // Toggle lesson list visibility for each course
+  function toggleLessons(id) {
+    const list = document.getElementById('lessons-' + id);
+    const btn  = list.previousElementSibling;
+    const isHidden = list.classList.toggle('hidden');
+    // Update button label based on state
+    const zhShow = '查看課程內容', zhHide = '收起課程內容';
+    const enShow = 'View Lessons',   enHide = 'Hide Lessons';
+    const isEn = document.body.classList.contains('lang-en');
+    btn.querySelector('[data-zh]').textContent = isHidden ? zhShow : zhHide;
+    btn.querySelector('[data-en]').textContent = isHidden ? enShow : enHide;
+  }
+</script>
+</body>
+</html>
