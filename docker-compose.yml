@@ -1,4 +1,4 @@
-# Antioch Church static site (antiochchurch.ca). Serves ./antioch-site 3
+# Antioch Church static site (antiochchurch.ca). Serves ./antiochchurch
 # read-only, so `git pull` here updates the live site.
 # Host nginx terminates TLS and proxies to 127.0.0.1:8100.
 services:
@@ -9,5 +9,5 @@ services:
     ports:
       - "127.0.0.1:8100:80"
     volumes:
-      - "./antioch-site 3:/usr/share/nginx/html:ro"
+      - "./antiochchurch:/usr/share/nginx/html:ro"
       - ./site.conf:/etc/nginx/conf.d/default.conf:ro
