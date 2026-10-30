@@ -1130,7 +1130,7 @@
 
 
 <!-- ============================================================
-     SERMON PREVIEW — Featured + 3 rows; full archive at /sermons
+     SERMON PREVIEW — Featured + 2 rows; full archive at /sermons
      ============================================================ -->
 <section class="section section--paper">
   <div class="container">
@@ -1172,7 +1172,7 @@
         </div>
       </div>
 
-      <!-- Recent sermon list (3 sermons, skipping the featured one) -->
+      <!-- Two more recent sermons, after the featured one -->
       <div>
         <div id="sermon-preview-list"></div>
         <div style="margin-top:24px;text-align:center">
@@ -1469,16 +1469,16 @@
 
 
   /* ── SERMON PREVIEW LIST ───────────────────────────────── */
-  // Show 3 sermons, skipping index 0 (the featured sermon above)
+  // Show the next 2 sermons after the featured sermon above.
   const previewContainer = document.getElementById('sermon-preview-list');
-  buildSermonList(previewContainer, 3, 1);
+  buildSermonList(previewContainer, 2, 1);
 
   // Re-render sermon list when language switches
   // (sermon titles are in the JS data, not the HTML)
   const originalToggle = window.toggleLang;
   window.toggleLang = function() {
     originalToggle();
-    buildSermonList(previewContainer, 3, 1);
+    buildSermonList(previewContainer, 2, 1);
   };
 </script>
 

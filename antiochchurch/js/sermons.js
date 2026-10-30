@@ -35,6 +35,17 @@ const SERMONS = [
     youtube:    'https://youtu.be/pccKuZHaA8U?si=85igHHBkoJOpvSKe'
   },
   {
+    zh:         '詩人如何在風暴中操練安息？',
+    en:         'How Does the Psalmist Practice Rest in the Storm?',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-10-18',
+    ref:        '詩篇 / Psalms',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://youtu.be/F18qK-MdB7M'
+  },
+  {
     zh:         '你準備好了嗎？',
     en:         'Are You Ready?',
     speaker:    '郭毓安牧師',
