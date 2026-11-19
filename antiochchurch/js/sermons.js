@@ -24,6 +24,39 @@
 
 const SERMONS = [
   {
+    zh:         '雅各的信仰之旅',
+    en:         "Jacob's Faith Journey",
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-11-15',
+    ref:        '',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://www.youtube.com/watch?v=n7kWniik_ik&feature=youtu.be'
+  },
+  {
+    zh:         '如何分辨兩種心靈昏暗？',
+    en:         'How to Distinguish Between Two Kinds of Spiritual Darkness?',
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-11-08',
+    ref:        '',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://youtu.be/mriozBIeWrs?si=h7O0ZcCuXOxjD8vI'
+  },
+  {
+    zh:         '沒事，我可以',
+    en:         "I'm Fine, I've Got This",
+    speaker:    '郭毓安牧師',
+    speaker_en: 'Pastor Andy Guo',
+    date:       '2026-11-01',
+    ref:        '',
+    desc_zh:    '',
+    desc_en:    '',
+    youtube:    'https://youtu.be/7YPjRnu-JiM?si=u0-zfxi88zjhujsX'
+  },
+  {
     zh:         '你把自己交給了誰？',
     en:         'To whom have you entrusted yourself to?',
     speaker:    '郭毓安牧師',
