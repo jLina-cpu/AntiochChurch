@@ -273,6 +273,7 @@ button {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 200;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -282,12 +283,33 @@ button {
               box-shadow var(--duration) var(--ease);
 }
 
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--wine-rgb),0.88) 0%,
+    rgba(var(--wine-rgb),0.68) 100%
+  );
+  pointer-events: none;
+  transition: opacity var(--duration) var(--ease);
+}
+
+.nav > * {
+  position: relative;
+  z-index: 1;
+}
+
 .nav.scrolled {
   background: rgba(253, 249, 243, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 1px 0 rgba(200, 144, 42, 0.15);
 }
+
+.nav.scrolled::before { opacity: 0; }
 
 /* Logo area */
 .nav-logo {
@@ -342,22 +364,29 @@ button {
 }
 
 .nav-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-family: var(--zh);
   font-size: 14px;
   color: rgba(255,255,255,0.94);
   letter-spacing: 0.035em;
   white-space: nowrap;
-  padding: 8px 8px;
+  padding: 8px 6px;
   border-radius: 6px;
+  background: transparent;
   transition: color 0.2s, background 0.2s;
 }
 
 .nav.scrolled .nav-links a { color: var(--mid); }
 
-.nav-links a:hover,
+.nav:not(.scrolled) .nav-links a:hover,
+.nav:not(.scrolled) .nav-links a:focus-visible,
 .nav-links a.active {
-  color: var(--gold) !important;
-  background: rgba(200,144,42,0.08);
+  color: white !important;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 7px;
 }
 
 .nav.scrolled .nav-links a:hover,
@@ -365,6 +394,40 @@ button {
 .nav.scrolled .nav-links a.active {
   color: var(--wine) !important;
   background: var(--wine-pale);
+}
+
+/* Keep homepage navigation aligned with the viewport edge. */
+.home-page .nav {
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+
+.nav .lang-btn { min-height: 44px; }
+
+.nav .nav-fb {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+}
+
+.nav .nav-hamburger {
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav:not(.scrolled) a:focus-visible,
+.nav:not(.scrolled) button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
+
+.nav.scrolled a:focus-visible,
+.nav.scrolled button:focus-visible,
+.mobile-menu a:focus-visible {
+  outline: 3px solid var(--wine);
+  outline-offset: 3px;
 }
 
 /* Right-side controls */

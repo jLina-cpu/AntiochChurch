@@ -15,7 +15,7 @@
     pages/3r.html     → 3R 課程
     pages/support.html→ 支持我們
 -->
-<html lang="zh-TW" id="html-root">
+<html lang="zh-TW" id="html-root" class="home-page">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -31,6 +31,8 @@
 
   <!-- Page-specific styles -->
   <style>
+    html.home-page { overflow-x: hidden; }
+
     /* ── LANGUAGE SWITCHING ──────────────────────────────────
      * [data-zh] is visible by default.
      * [data-en] is hidden by default.
@@ -47,118 +49,94 @@
     .lang-en span[data-zh]  { display: none; }
 
     /* ── HERO SLIDESHOW ──────────────────────────────────────
-     * Full-screen hero with 5 rotating real church photos.
-     * Each .hero-slide is absolutely positioned and fades in/out.
+     * The photo stays visible under a bottom-weighted burgundy gradient.
      */
     .hero {
       position: relative;
       height: 100vh;
+      height: 100svh;
       min-height: 600px;
       overflow: hidden;
-      --hero-image-brightness: 0.85;
-      --hero-overlay-opacity: 0.12;
-      --hero-card-blur: 15px;
-      --hero-card-opacity: 0.85;
-      --hero-card-surface: rgba(var(--wine-rgb),0.24);
+      --hero-gradient-bottom: 0.92;
+      --hero-gradient-middle: 0.65;
     }
 
     .hero-slideshow {
       position: absolute;
       inset: 0;
       z-index: 0;
-      filter: brightness(var(--hero-image-brightness));
-      transition: filter 0.4s ease;
     }
 
     .hero-slide {
       position: absolute;
       inset: 0;
       background-size: cover;
-      background-position: center;
+      background-position: center 20%;
       opacity: 0;
-      /* Slow crossfade between slides */
       transition: opacity 1.8s ease;
     }
 
+    .hero-slide[data-tone="calm"] {
+      background-size: 120% auto;
+      background-position: 100% 100%;
+    }
+
+    .hero-slide[data-tone="bright"] { background-position: center 55%; }
+
     .hero-slide.active { opacity: 1; }
+
+    .hero:has(.hero-slide[data-tone="bright"].active) {
+      --hero-gradient-bottom: 0.96;
+      --hero-gradient-middle: 0.74;
+    }
 
     .hero-overlay {
       position: absolute;
       inset: 0;
       z-index: 1;
-      background: linear-gradient(
-        to bottom,
-        rgba(0,0,0,0.35),
-        rgba(0,0,0,0.35)
-      );
-      opacity: var(--hero-overlay-opacity);
-      transition: opacity 0.4s ease;
+      /* Keep faces bright; concentrate contrast behind the bottom-left copy. */
+      background:
+        linear-gradient(
+          to top,
+          rgba(var(--wine-rgb),var(--hero-gradient-bottom)) 0%,
+          rgba(var(--wine-rgb),var(--hero-gradient-middle)) 40%,
+          transparent 65%
+        ),
+        linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 16%);
     }
 
-    /* Centred content over the slideshow */
+    /* Anchor the unboxed copy to the lower-left over the photo. */
     .hero-content {
       position: relative;
       z-index: 2;
       height: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 120px 24px 80px;
+      align-items: flex-start;
+      justify-content: flex-end;
+      text-align: left;
+      padding: 80px 6vw 10vh;
     }
 
     .hero-copy {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      width: min(100%, 820px);
-      padding: clamp(28px, 4vw, 42px) clamp(20px, 5vw, 52px)
-               clamp(40px, 5vw, 58px);
-      background: var(--hero-card-surface);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 20px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.14);
-      opacity: var(--hero-card-opacity);
-      -webkit-backdrop-filter: blur(var(--hero-card-blur));
-      backdrop-filter: blur(var(--hero-card-blur));
-      transition:
-        background-color 0.3s ease,
-        opacity 0.4s ease,
-        backdrop-filter 0.4s ease,
-        -webkit-backdrop-filter 0.4s ease;
-    }
-
-    .hero:has(.hero-copy:hover),
-    .hero:has(.hero-copy:focus-within) {
-      --hero-image-brightness: 0.55;
-      --hero-overlay-opacity: 0.12;
-      --hero-card-blur: 24px;
-      --hero-card-opacity: 1;
-      --hero-card-surface: rgba(var(--wine-rgb),0.62);
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .hero:hover:not(:has(.hero-copy:hover)):not(:has(.hero-copy:focus-within)) {
-        --hero-image-brightness: 1;
-        --hero-overlay-opacity: 0;
-        --hero-card-blur: 4px;
-        --hero-card-opacity: 0.4;
-      }
+      align-items: flex-start;
+      width: min(100%, 980px);
     }
 
     .hero-eyebrow {
       font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 600;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.65);
-      margin-bottom: 20px;
+      color: white;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 14px;
-      letter-spacing: 0.2em;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+      letter-spacing: 0.16em;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
 
     /* Decorative rules either side of eyebrow text */
@@ -168,47 +146,34 @@
       display: block;
       width: 28px;
       height: 1px;
-      background: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.75);
     }
 
     .hero-title {
       font-family: var(--zh);
-      font-size: clamp(48px, 9vw, 96px);
+      font-size: clamp(42px, 8vw, 96px);
       font-weight: 600;
       color: white;
       line-height: 1.05;
-      letter-spacing: 0.06em;
-      margin-bottom: 12px;
-      text-shadow: 0 2px 10px rgba(255,255,255,0.4);
-      /* Fade up on page load */
-      animation: fadeUp 1.2s ease-out both;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
 
     .lang-en .hero-title {
       font-family: var(--serif);
-      font-size: clamp(40px, 7vw, 82px);
-      letter-spacing: 0.055em;
-    }
-
-    .hero-title-sub {
-      font-family: var(--serif);
-      font-style: italic;
-      font-size: clamp(16px, 2.5vw, 28px);
-      color: #FFD166;
-      margin-bottom: 20px;
-      text-shadow: 0 2px 10px rgba(255,255,255,0.4);
-      animation: fadeUp 1.2s 0.15s ease-out both;
+      font-size: clamp(36px, 7vw, 82px);
+      letter-spacing: 0.02em;
     }
 
     .hero-slogan {
       font-family: var(--zh);
       font-size: clamp(13px, 1.8vw, 18px);
-      font-weight: 300;
-      color: rgba(255,255,255,0.85);
-      letter-spacing: 0.14em;
-      margin-bottom: 8px;
-      text-shadow: 0 2px 10px rgba(255,255,255,0.4);
-      animation: fadeUp 1.2s 0.3s ease-out both;
+      font-weight: 500;
+      color: white;
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
 
     .lang-en .hero-slogan {
@@ -217,53 +182,103 @@
       letter-spacing: 0.06em;
     }
 
-    .hero-slogan-en {
-      font-family: var(--serif);
-      font-style: italic;
-      font-size: clamp(12px, 1.4vw, 15px);
-      color: rgba(255,255,255,0.45);
-      margin-bottom: 36px;
-      text-shadow: 0 2px 10px rgba(255,255,255,0.4);
-      animation: fadeUp 1.2s 0.4s ease-out both;
-    }
-
     .hero-ctas {
       display: flex;
+      align-items: center;
+      justify-content: flex-start;
       gap: 14px;
       flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 1.2s 0.5s ease-out both;
     }
 
-    .hero-ctas .btn {
-      box-shadow: 0 4px 15px rgba(255,255,255,0.15);
+    .hero-ctas .btn--gold {
+      min-height: 48px;
+      color: var(--wine);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
     }
 
-    /* Slideshow navigation dots */
+    .hero-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 10px 8px;
+      color: white;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 5px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .hero-link:hover { color: var(--gold-lt); }
+
+    .hero-ctas .btn:focus-visible,
+    .hero-link:focus-visible,
+    .hero-dot:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 3px;
+    }
+
+    /* Slideshow controls stay clear of the lower-left hero copy. */
     .hero-dots {
       position: absolute;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
+      right: 6vw;
+      bottom: 12px;
       z-index: 3;
       display: flex;
-      gap: 8px;
+      gap: 2px;
     }
 
     .hero-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.35);
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      background: transparent;
       cursor: pointer;
-      transition: all 0.3s;
       border: none;
     }
 
-    .hero-dot.active {
-      background: white;
+    .hero-dot::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.62);
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+
+    .hero-dot.active::before {
       width: 24px;
-      border-radius: 3px;
+      background: white;
+    }
+
+    @media (max-width: 768px) {
+      .hero { min-height: 560px; }
+      .hero-slide[data-tone="bright"] {
+        background-size: auto 120%;
+        background-position: 50% 80%;
+      }
+      .hero-slide[data-tone="calm"] {
+        background-size: auto 125%;
+        background-position: 80% 55%;
+      }
+      .hero-content { padding-right: 6vw; }
+      .hero-copy { width: 100%; }
+      .hero-title { font-size: clamp(42px, 11vw, 64px); }
+      .lang-en .hero-title { font-size: clamp(36px, 9.5vw, 58px); }
+      .hero-ctas { gap: 8px; }
+      .hero-dots { right: 4vw; bottom: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-slide,
+      .hero-dot::before {
+        transition: none;
+      }
     }
 
     /* ── SERVICE INFO BAR ────────────────────────────────────
@@ -805,7 +820,6 @@
     }
 
     @media (max-width: 768px) {
-      .hero-copy { padding: 26px 20px 38px; }
       .news-grid,
       .courses-grid { grid-template-columns: 1fr; }
       .service-bar { flex-direction: column; align-items: flex-start; gap: 14px; padding: 24px 20px; }
@@ -815,7 +829,7 @@
   </style>
 </head>
 
-<body>
+<body class="home-page">
 
 <!-- ============================================================
      NAVIGATION (shared HTML, behaviour in js/nav.js)
@@ -869,17 +883,14 @@
 
 
 <!-- ============================================================
-     HERO — Full-screen slideshow with 5 real church photos
+     HERO — Full-screen slideshow with two church photos
      ============================================================ -->
 <section class="hero">
 
   <!-- Background photos — JS cycles through these every 5 seconds -->
   <div class="hero-slideshow" id="slideshow">
-    <div class="hero-slide active" style="background-image:url(images/outing.jpeg)"></div>
-    <div class="hero-slide" style="background-image:url(images/piano.jpeg)"></div>
-    <div class="hero-slide" style="background-image:url(images/congregation.jpeg)"></div>
-    <div class="hero-slide" style="background-image:url(images/fathersday.jpeg)"></div>
-    <div class="hero-slide" style="background-image:url(images/christmas.jpeg)"></div>
+    <div class="hero-slide active" data-tone="bright" style="background-image:url(images/outing.jpeg)"></div>
+    <div class="hero-slide" data-tone="calm" style="background-image:url(images/piano.jpeg)"></div>
   </div>
 
   <div class="hero-overlay"></div>
@@ -896,18 +907,9 @@
         <span data-en>Antioch Church</span>
       </h1>
 
-      <div class="hero-title-sub">
-        <span data-zh>Antioch Church · Vancouver</span>
-        <span data-en>A Mandarin Chinese Christian Community</span>
-      </div>
-
       <div class="hero-slogan">
         <span data-zh>榮耀神 · 享受神 · 傳揚神</span>
         <span data-en>Glorify God · Enjoy God · Proclaim God</span>
-      </div>
-      <div class="hero-slogan-en">
-        <span data-zh>Glorify God · Enjoy God · Proclaim God</span>
-        <span data-en>榮耀神 · 享受神 · 傳揚神</span>
       </div>
 
       <!-- Two CTAs: primary visits the church info, secondary goes to About -->
@@ -916,7 +918,7 @@
           <span data-zh>前來聚會 ↓</span>
           <span data-en>Visit Us ↓</span>
         </a>
-        <a href="pages/about.html" class="btn btn--ghost">
+        <a href="pages/about.html" class="hero-link">
           <span data-zh>認識我們</span>
           <span data-en>Learn More</span>
         </a>
@@ -925,7 +927,7 @@
   </div>
 
   <!-- Dots to navigate between slides -->
-  <div class="hero-dots" id="heroDots" role="tablist" aria-label="Slideshow navigation"></div>
+  <div class="hero-dots" id="heroDots" role="group" aria-label="Slideshow controls"></div>
 </section>
 
 
@@ -992,9 +994,8 @@
         </a>
       </div>
 
-      <!-- Photo mosaic column — 4 real congregation photos -->
+      <!-- Photo mosaic column — congregation photos -->
       <div class="photo-mosaic reveal from-right">
-        <div class="mosaic-cell"><img src="images/congregation.jpeg" alt="Church community"/></div>
         <div class="mosaic-cell"><img src="images/pastor-andy.jpeg" alt="Pastor induction"/></div>
         <div class="mosaic-cell"><img src="images/people.jpg" alt="Church members"/></div>
         <div class="mosaic-cell"><img src="images/outing.jpeg" alt="Church outing"/></div>
@@ -1431,6 +1432,7 @@
   /* ── HERO SLIDESHOW ────────────────────────────────────── */
   const slides     = document.querySelectorAll('.hero-slide');
   const dotsEl     = document.getElementById('heroDots');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let currentSlide = 0;
   let slideshowTimer;
 
@@ -1438,8 +1440,9 @@
   slides.forEach((_, i) => {
     const dot = document.createElement('button');
     dot.className    = 'hero-dot' + (i === 0 ? ' active' : '');
-    dot.setAttribute('role', 'tab');
-    dot.setAttribute('aria-label', `Slide ${i + 1}`);
+    dot.setAttribute('type', 'button');
+    dot.setAttribute('aria-label', `Show slide ${i + 1}`);
+    dot.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
     dot.addEventListener('click', () => goToSlide(i));
     dotsEl.appendChild(dot);
   });
@@ -1448,15 +1451,17 @@
     // Remove active from current slide and dot
     slides[currentSlide].classList.remove('active');
     dotsEl.children[currentSlide].classList.remove('active');
+    dotsEl.children[currentSlide].setAttribute('aria-pressed', 'false');
 
     // Activate the new slide and dot
     currentSlide = n;
     slides[currentSlide].classList.add('active');
     dotsEl.children[currentSlide].classList.add('active');
+    dotsEl.children[currentSlide].setAttribute('aria-pressed', 'true');
 
     // Reset the auto-advance timer
     clearInterval(slideshowTimer);
-    slideshowTimer = setInterval(advanceSlide, 5000);
+    if (!reducedMotion) slideshowTimer = setInterval(advanceSlide, 5000);
   }
 
   function advanceSlide() {
@@ -1464,7 +1469,7 @@
   }
 
   // Auto-advance every 5 seconds
-  slideshowTimer = setInterval(advanceSlide, 5000);
+  if (!reducedMotion) slideshowTimer = setInterval(advanceSlide, 5000);
 
 
   /* ── SERMON PREVIEW LIST ───────────────────────────────── */
